@@ -19,3 +19,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+bots_connector/chatstop-cit-firebase-adminsdk-uzdgc-c0216daa49.json
+
