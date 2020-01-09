@@ -1,0 +1,22 @@
+{
+  "chatrooms" : {
+    "botTest" : {
+      "test" : {
+        "chats" : {
+          "-Lu89pbOUHHBQREtBRtZ" : {
+            "message" : "test has joined this room.",
+            "sendDate" : "Wed Nov 20 2019 15:15:56 GMT+0100 (Ora standard dell’Europa centrale)",
+            "type" : "join",
+            "user" : "test"
+          },
+          "-Lu8A2OIonUQzAPKAMmj" : {
+            "message" : "weee",
+            "sendDate" : "Wed Nov 20 2019 15:16:53 GMT+0100 (Ora standard dell’Europa centrale)",
+            "type" : "newmsg",
+            "user" : "test"
+          }
+        }
+      }
+    }
+  }
+}
