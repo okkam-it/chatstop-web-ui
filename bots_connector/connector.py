@@ -34,19 +34,21 @@ def chat_listener(event):
             print("edit")
         else:
             path = event.path.split("/")
-            botid = path[1]
-            userid = path[2]
+            print(path)
+            branchid = path[1]
+            botid = path[2]
+            userid = path[3]
             if(event.data):
 
                 dictRef = event.data
 
                 if(dictRef.get('type') == "newmsg"):
-                    posts_ref = ref.child(botid).child(userid).child("chats")
+                    posts_ref = ref.child(branchid).child(botid).child(userid).child("chats")
 
-                    botsref.child(path[1]).update({'typing': True})
+                    botsref.child(path[2]).update({'typing': True})
 
                     #url_bot = botsref.child(path[1]).child("api-url").get()
-                    address = botsref.child(path[1]).child("address").get()
+                    address = botsref.child(path[2]).child("address").get()
                     url_bot = "http://" + address.get("ip") + ":" + address.get("port") + "/" + address.get("api")
 
                     data = {
@@ -58,7 +60,7 @@ def chat_listener(event):
                         r = requests.post(str(url_bot), json=data)
                         r.raise_for_status()
                         respJson = r.json()
-                        botsref.child(path[1]).update({'typing': False})
+                        botsref.child(path[2]).update({'typing': False})
                         if len(respJson):
                             for j in respJson:
                                 print(j)

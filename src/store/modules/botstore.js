@@ -1,5 +1,6 @@
 const state = {
     selectedBot: null,
+    selectedBranch: null,
     adminPage: false
 };
 
@@ -14,16 +15,25 @@ const actions = {
 
 const getters = {
     selectedBot: state => state.selectedBot,
+    selectedBranch: state => state.selectedBranch,
     adminPage: state => state.adminPage        
   };
 
 const mutations = {
     selectBot(state, payload) {
         state.adminPage = false 
-        state.selectedBot = payload
+        if(payload) {
+            state.selectedBranch = payload.branch
+            state.selectedBot = payload.bot
+        } else {
+            state.selectedBot = null
+            state.selectedBranch = null
+        }
+        
     },
     adminOpened(state, payload) {
         state.selectedBot = null
+        state.selectedBranch = null
         state.adminPage = payload        
     }
 };

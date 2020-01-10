@@ -9,7 +9,7 @@
         <!--<admin-panel v-if="admin && adminPage" />
         <chat v-else-if="!adminPage && bot" :key="bot.id" :bot="bot" :username="username" />
         -->
-        <chat v-if="bot" :key="bot.id" :bot="bot" :username="username" />
+        <chat v-if="bot" :key="branch + '_' + bot.id" :bot="bot" :branch="branch" :username="username" />
       
         <div class="chat-void" v-else>
           <div class="logo-box">
@@ -113,6 +113,9 @@ export default {
   computed: {
     bot() {      
       return this.$store.getters.selectedBot;
+    },
+    branch() {
+      return this.$store.getters.selectedBranch;
     },
     /*selectedBot() {
       return this.bots.find(obj => {

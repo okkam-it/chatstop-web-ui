@@ -1,7 +1,7 @@
 <template>
   <div v-if="branch" class="branch-box">
     <p class="branch-name">{{branch.name}}</p>
-    <item-bot v-for="bot in branch.bots" :key="bot" :botid="bot" :searchstring="searchstring"/>
+    <item-bot v-for="bot in branch.bots" :key="bot" :botid="bot" :branch="branch.id" :searchstring="searchstring"/>
   </div>
 </template>
 
@@ -37,6 +37,7 @@ export default {
       .child(this.branchid)
       .on("value", snapshot => {
         this.branch = snapshot.val();
+        this.branch.id = snapshot.key
       });
   },
   computed: {}

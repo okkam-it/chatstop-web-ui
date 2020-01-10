@@ -127,6 +127,10 @@ export default {
       type: Object,
       required: true
     },
+    branch: {
+      type: String,
+      required: true
+    },
     username: {
       type: String,
       required: true
@@ -149,7 +153,7 @@ export default {
         this.loading = true;
         firebase
           .database()
-          .ref("chatrooms/" + this.bot.id + "/" + this.username + "/chats")
+          .ref("chatrooms/" + this.branch + "/" + this.bot.id + "/" + this.username + "/chats")
           .limitToLast(this.limit)
           .once("value", snapshot => {
             this.chats = [];
@@ -179,7 +183,7 @@ export default {
       if (this.bot.available && this.data.message && this.data.message.length) {
         let newData = firebase
           .database()
-          .ref("chatrooms/" + this.bot.id + "/" + this.username + "/chats")
+          .ref("chatrooms/" + this.branch + "/" + this.bot.id + "/" + this.username + "/chats")
           .push();
         newData.set({
           type: "newmsg",
@@ -208,6 +212,7 @@ export default {
     }*/
   },
   created() {
+    
     /*let joinData = firebase.database().ref('chatrooms/'+this.botid + '/' + this.username +'/chats').push();
     joinData.set({
       type: 'join',
@@ -220,7 +225,7 @@ export default {
     //this.loadmore()
     firebase
       .database()
-      .ref("chatrooms/" + this.bot.id + "/" + this.username + "/chats")
+      .ref("chatrooms/" + this.branch + "/" + this.bot.id + "/" + this.username + "/chats")
       .limitToLast(this.limit)
       .on("value", snapshot => {
         this.chats = [];
