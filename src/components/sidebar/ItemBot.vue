@@ -30,6 +30,10 @@ export default {
       type: String,
       required: true
     },
+    branch: {
+      type: String,
+      required: true
+    },
     searchstring: {
       type: String,
       required: true
@@ -53,7 +57,11 @@ export default {
     
     selectBot() {   
       if(this.bot.available) {
-        this.$store.dispatch("setSelectedBot", this.bot);
+        var data = {
+          bot: this.bot,
+          branch: this.branch
+        }        
+        this.$store.dispatch("setSelectedBot", data);
       } else {
         alert("Bot unavailable!")
       }
@@ -66,8 +74,9 @@ export default {
   },
   computed: {
     isSelected () {
-      var s = this.$store.getters.selectedBot
-      if(s && s.id == this.botid) {
+      var sbot = this.$store.getters.selectedBot
+      var sbrach = this.$store.getters.selectedBranch
+      if((sbot && sbot.id == this.botid) && (sbrach && sbrach == this.branch) ) {
           return true 
       }
       return false
