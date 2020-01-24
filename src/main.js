@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import VueAxios from "vue-axios";
+import axios from "axios";
 import MixinMobileDetection from '@/mixins/mixinMobileDetection'
 
 
@@ -28,6 +30,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.use(BootstrapVue)
 Vue.use(VueChatScroll)
+Vue.use(VueAxios, axios);
 
 Vue.mixin(MixinMobileDetection); 
 

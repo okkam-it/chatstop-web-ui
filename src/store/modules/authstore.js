@@ -1,9 +1,26 @@
 import firebase from '@/config/firebase'
+import services from '@/config/services'
+import axios from "axios";
 const state = {
     user: null,
     status: null,
     error: null
 };
+
+function createUser(uid, name) {
+    var data = {
+        uid: uid,
+        name: name,
+        admin: false
+    };
+    axios.post(services.CREATE_USER, data)
+        .then(response => {
+            return response;
+        })
+        .catch(error => {
+            return error.message;
+        });
+}
 
 const actions = {
     setUser({ commit }, payload) {
@@ -27,7 +44,8 @@ const actions = {
                 commit('setUser', response.user)
                 commit('setStatus', 'success')
                 commit('setError', null)
-
+                // create user in stop DB
+                createUser(response.user.uid, payload.username);
                 /*firebase
                     .database()
                     .ref("users/" + response.user.uid).set({
@@ -38,18 +56,22 @@ const actions = {
                 commit('setStatus', 'failure')
                 commit('setError', error.message)
             })
-    },    
+    },
 
     signInAction: ({ commit }, payload) => {
         commit('setStatus', 'loading')
-        var email = payload.username + "@fakemail.ie"        
+        var email = payload.username + "@fakemail.ie"
         firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION) //with LOCAL will be persisted even when the browser window is closed
             .then(function () {
-
                 return firebase.auth().signInWithEmailAndPassword(email, payload.password)
-                    .then(() => {                       
-                        
-
+                    .then((response) => {
+                        let uid = response.user.uid;
+                        axios.get(services.FIND_USER_BY_NAME + payload.username).then(response => {
+                            // create user in stop DB if not found
+                            if (response.data === '') {
+                                createUser(uid, payload.username);
+                            }
+                        });
                     })
                     .catch((error) => {
                         commit('setStatus', 'failure')
@@ -112,7 +134,6 @@ const mutations = {
         state.error = payload
     }
 };
-
 
 export default {
     state,

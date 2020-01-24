@@ -6,7 +6,7 @@
       </b-col>
       <b-col cols="4" lg="4" >
            
-          <strong class="branch-code">{{branch.id}}</strong>
+          <strong class="branch-code">{{branch.code}}</strong>
        
       </b-col>
       <b-col cols="4" lg="3" >
