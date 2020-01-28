@@ -284,13 +284,14 @@ export default {
       this.$refs.alertModal.show();
     },
     deleteUser() {
-      firebase
-        .database()
-        .ref("users/" + this.selectedItem.id)
-        .remove()
+      // TODO delete user on firebase?
+      var url = services.DELETE_USER;
+      url = url.replace("{userId}", this.selectedItem.id);
+      this.axios
+        .delete(url)
         .then(function() {})
-        .catch(function(error) {
-          alert(error.message);
+        .catch(e => {
+          alert(e.message);
         });
     },
     callbackConfirmAlertModal() {

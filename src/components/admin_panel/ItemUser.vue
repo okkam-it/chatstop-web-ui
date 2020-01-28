@@ -25,7 +25,6 @@
 </template>
 
 <script>
-//import firebase from "../../config/firebase";
 export default {
   name: "ItemBot",
   data() {

@@ -99,7 +99,7 @@ const actions = {
                 commit('setStatus', 'failure')
                 commit('setError', error.message)
             })
-    }
+    },
     /* eslint-enable */
 };
 
