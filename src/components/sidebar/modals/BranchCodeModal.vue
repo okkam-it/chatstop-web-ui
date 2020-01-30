@@ -42,6 +42,7 @@ export default {
       evt.preventDefault();
       this.addBranch().then(res => {
         if (!res) {
+          this.$emit("update-branches");
           this.closeModal();
         } else {
           this.msg_error = res;

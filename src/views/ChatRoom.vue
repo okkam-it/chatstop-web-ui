@@ -3,7 +3,7 @@
     <!--<sidebar/> -->
     <b-row class="main" :class="{ 'mobile' : isMobile}">
       <b-col cols="0" sm="0" xl="3" class="col" v-if="!isMobile">
-        <sidebar-chats :branches="branches" :username="username" />
+        <sidebar-chats :branches="branches" :username="username" @update-branches="loadUser()"/>
       </b-col>
       <b-col cols="12" xl="9" class="col">
         <!--<admin-panel v-if="admin && adminPage" />
@@ -29,7 +29,7 @@
 
     <!--<div v-if="isMobile && !selectedBot && !adminPage" class="sidebar-mobile">-->
     <div v-if="isMobile && !bot" class="sidebar-mobile">
-      <sidebar-chats :branches="branches" :username="username" />
+      <sidebar-chats :branches="branches" :username="username" @update-branches="loadUser()" />
     </div>
   </div>
 </template>
@@ -58,8 +58,7 @@ export default {
   created() {
     this.loadUser();
   },
-  mounted() {
-  },
+  mounted() {},
 
   computed: {
     bot() {
