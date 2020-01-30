@@ -31,10 +31,6 @@ export default {
       type: Object,
       required: true
     },
-    branch: {
-      type: String,
-      required: true
-    },
     searchstring: {
       type: String,
       required: true
@@ -57,8 +53,13 @@ export default {
   watch: {},
   computed: {
     isSelected() {
-      var s = this.$store.getters.selectedBot;
-      if (s && s.id == this.bot.id) {
+      var sbot = this.$store.getters.selectedBot;
+      var sbranch = this.$store.getters.selectedBranch;
+      if (
+        sbot &&
+        sbot.id === this.bot.id &&
+        sbranch && sbranch.id === this.branch.id
+      ) {
         return true;
       }
       return false;

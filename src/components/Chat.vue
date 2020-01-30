@@ -137,7 +137,19 @@ export default {
       required: true
     }
   },
-  watch: {},
+  watch: {
+    // whenever question changes, this function will run
+    bot: function (newBot, oldBot) {
+      if (newBot.id !== oldBot.id) {
+        this.loadChatRoom();
+      }
+    },
+    branch: function (newBranch, oldBranch) {
+      if (newBranch.id !== oldBranch.id) {
+        this.loadChatRoom();
+      }
+    }
+  },
   methods: {
     onScroll({ target: { scrollTop, clientHeight, scrollHeight } }) {
       if (scrollTop < 15 && this.last_scroll_top > 15) {
@@ -238,6 +250,8 @@ export default {
       this.$store.dispatch("setSelectedBot", null);
     },
     initWebSocket() {
+      // disconnect older connections, if found
+      this.disconnect();
       var socket = new SockJS(services.STOP_API_URL + "stop-chatbot-websocket");
       const options = { debug: false, heartbeat: false, protocols: ['v12.stomp'] }
       this.stompClient = Stomp.over(socket, options);
@@ -249,6 +263,7 @@ export default {
           this.stompClient.subscribe("/bot/response", tick => {
             this.isTyping = false;
             this.chats.push(JSON.parse(tick.body));
+            console.log(this.chats.length);
           });
         },
         error => {
