@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import firebase from "../../config/firebase";
+import services from "@/config/services";
 export default {
   name: "ItemBot",
   data() {
@@ -70,13 +70,15 @@ export default {
   },
   created() {
     var context = this;
-    firebase
-      .database()
-      .ref("/chatrooms/" + this.bot.id)
-      .on("value", snapshot => {
-        if (snapshot.val()) {
-          context.convs = snapshot.numChildren();
-        }
+    var url = services.FIND_CHATROOMS_BY_BOT;
+    url = url.replace("{botId}", this.bot.id);
+    this.axios
+      .get(url)
+      .then(response => {
+        context.convs = response.data.length;
+      })
+      .catch(e => {
+        this.msg_error = e.message;
       });
   }
 };
@@ -131,7 +133,7 @@ export default {
   width: 100%;
 }
 
-.trash-box:hover > .fa{
- color: #dc3545
+.trash-box:hover > .fa {
+  color: #dc3545;
 }
 </style>

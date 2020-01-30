@@ -64,7 +64,8 @@ export default {
     },
     async addBranch() {
       var branch_code = this.code;
-      var userid = this.$store.getters.user.id;
+      // alert(JSON.stringify(this.$store.getters.user));
+      var userid = this.$store.getters.user.uid;
       var url = services.ADD_BRANCH_TO_USER;
       url = url.replace("{userId}", userid) + branch_code;
       if (branch_code) {

@@ -7,19 +7,15 @@ const state = {
     error: null
 };
 
-function createUser(uid, name) {
+function createUser(uid, username, email) {
     var data = {
         uid: uid,
-        name: name,
-        admin: false
+        username: username,
+        email: email,
+        // TODO: set it to false
+        admin: true
     };
-    axios.post(services.CREATE_USER, data)
-        .then(response => {
-            return response;
-        })
-        .catch(error => {
-            return error.message;
-        });
+    return data;
 }
 
 const actions = {
@@ -33,24 +29,14 @@ const actions = {
         commit('setStatus', payload)
     },
 
-    signUpAction({ commit }, payload) {
+    signUpAction({ commit, dispatch }, payload) {
         commit('setStatus', 'loading')
         var email = payload.username + "@fakemail.ie"
         firebase.auth().createUserWithEmailAndPassword(email, payload.password)
             .then((response) => {
-                // alert('success')
-                // response will have user
-                // user will have uid will be updated to the state
-                commit('setUser', response.user)
-                commit('setStatus', 'success')
-                commit('setError', null)
                 // create user in stop DB
-                createUser(response.user.uid, payload.username);
-                /*firebase
-                    .database()
-                    .ref("users/" + response.user.uid).set({
-                        admin: false
-                    });*/
+                let user = createUser(response.user.uid, payload.username, email);
+                dispatch('createDbUserIfNotFound', user);
             })
             .catch((error) => {
                 commit('setStatus', 'failure')
@@ -58,26 +44,20 @@ const actions = {
             })
     },
 
-    signInAction: ({ commit }, payload) => {
+    signInAction: ({ commit, dispatch }, payload) => {
         commit('setStatus', 'loading')
         var email = payload.username + "@fakemail.ie"
         firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION) //with LOCAL will be persisted even when the browser window is closed
             .then(function () {
                 return firebase.auth().signInWithEmailAndPassword(email, payload.password)
                     .then((response) => {
-                        let uid = response.user.uid;
-                        axios.get(services.FIND_USER_BY_NAME + payload.username).then(response => {
-                            // create user in stop DB if not found
-                            if (response.data === '') {
-                                createUser(uid, payload.username);
-                            }
-                        });
-                    })
-                    .catch((error) => {
-                        commit('setStatus', 'failure')
-                        commit('setError', error.message)
-                    })
-
+                        let user = createUser(response.user.uid, payload.username, email);
+                        dispatch('createDbUserIfNotFound', user);
+                    });
+            })
+            .catch((error) => {
+                commit('setStatus', 'failure')
+                commit('setError', error.message)
             })
             .catch(function (error) {
                 // Handle Errors here.
@@ -90,7 +70,6 @@ const actions = {
     signOutAction({ commit }) {
         firebase.auth().signOut()
             .then((response) => {
-
                 commit('setUser', null)
                 commit('setStatus', 'success')
                 commit('setError', null)
@@ -100,6 +79,18 @@ const actions = {
                 commit('setError', error.message)
             })
     },
+    createDbUserIfNotFound({ commit }, user_data) {
+        axios.post(services.CREATE_USER, user_data)
+            .then(response => {
+                commit('setStatus', 'success')
+                commit('setError', null)
+                return response;
+            })
+            .catch(error => {
+                commit('setStatus', 'failure')
+                commit('setError', error.message)
+            });
+    }
     /* eslint-enable */
 };
 

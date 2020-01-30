@@ -15,7 +15,6 @@
             </span>
           </p>
         </b-col>
-        
       </b-row>
     </div>
 
@@ -43,7 +42,7 @@
                   <span>{{new Date(chat.sendDate).toLocaleDateString('default', { day: 'numeric', month: 'long', year: 'numeric' })}}</span>
                 </p>
               </div>
-              <div class="chat-message text-right" v-if="chat.user === username">
+              <div class="chat-message text-right" v-if="chat.user === user.username">
                 <div class="bubble right-bubble">
                   <p text-wrap>{{chat.message}}</p>
                   <div class="msg-date">
@@ -51,7 +50,7 @@
                   </div>
                 </div>
               </div>
-              <div class="chat-message text-left" text-left v-if="chat.user !== username">
+              <div class="chat-message text-left" text-left v-if="chat.user !== user.username">
                 <div class="bubble left-bubble">
                   <p text-wrap>{{chat.message}}</p>
                   <div class="msg-date">
@@ -61,7 +60,7 @@
               </div>
             </div>
           </b-list-group-item>
-          <transition name="fade-long">
+          <transition name="fade">
             <b-list-group-item class="chat-item chat-item-typing" v-if="isTyping" key="loading">
               <div class="chat-message chat-message-typing text-left" text-left>
                 <div class="bubble left-bubble">
@@ -103,7 +102,9 @@
 </template>
 
 <script>
-import firebase from "../config/firebase";
+import services from "@/config/services";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
 export default {
   name: "AddBoard",
   data() {
@@ -115,11 +116,11 @@ export default {
       isTyping: false,
       limit: 15,
       last_scroll_top: 0,
+      stompClient: null,
       //last_scroll_height: 0,
       last_x: 0,
+      chatroom: {},
       loading: false
-      // username: this.$route.params.username
-      // username: this.$store.getters.user.username
     };
   },
   props: {
@@ -128,11 +129,11 @@ export default {
       required: true
     },
     branch: {
-      type: String,
+      type: Object,
       required: true
     },
-    username: {
-      type: String,
+    user: {
+      type: Object,
       required: true
     }
   },
@@ -151,24 +152,7 @@ export default {
     loadmore() {
       if (!this.loading) {
         this.loading = true;
-        firebase
-          .database()
-          .ref("chatrooms/" + this.branch + "/" + this.bot.id + "/" + this.username + "/chats")
-          .limitToLast(this.limit)
-          .once("value", snapshot => {
-            this.chats = [];
-            snapshot.forEach(doc => {
-              var item = doc.val();
-              if (item) {
-                item.key = doc.key;
-                this.chats.push(item);
-              }
-            });
-            this.loading = false;
-            this.$nextTick(() => {
-              this.setLastScrollPos();
-            });
-          });
+        this.loadChats(true);
       }
     },
     setLastScrollPos() {
@@ -178,25 +162,106 @@ export default {
         this.last_x;
       this.$refs.chatbox.scrollTop = s;
     },
+    loadChatRoom() {
+      this.initWebSocket();
+      var url = services.FIND_CHATROOM;
+      url = url
+        .replace("{userId}", this.user.id)
+        .replace("{branchId}", this.branch.id)
+        .replace("{botId}", this.bot.id);
+      this.axios
+        .get(url)
+        .then(response => {
+          if (response.data === null || response.data === "") {
+            this.createChatRoom();
+          } else {
+            this.chatroom = response.data;
+            this.loadChats(false);
+          }
+        })
+        .catch(e => {
+          this.msg_error = e.message;
+        });
+    },
+    loadChats(loadMore) {
+      var url = services.FIND_ALL_CHATS;
+      url = url.replace("{chatRoomId}", this.chatroom.id);
+      this.axios
+        .get(url + this.limit)
+        .then(response => {
+          this.chats = response.data;
+          if (loadMore) {
+            this.loading = false;
+            this.$nextTick(() => {
+              this.setLastScrollPos();
+            });
+          }
+        })
+        .catch(e => {
+          this.msg_error = e.message;
+        });
+    },
+    createChatRoom() {
+      let data = {
+        botId: this.bot.id,
+        branchId: this.branch.id,
+        userId: this.user.id
+      };
+      this.axios
+        .post(services.CREATE_CHATROOM, data)
+        .then(response => {
+          this.chatroom = response.data;
+          this.loadChats(false);
+        })
+        .catch(e => {
+          this.msg_error = e.message;
+        });
+    },
     onSubmit(evt) {
       evt.preventDefault();
       if (this.bot.available && this.data.message && this.data.message.length) {
-        let newData = firebase
-          .database()
-          .ref("chatrooms/" + this.branch + "/" + this.bot.id + "/" + this.username + "/chats")
-          .push();
-        newData.set({
+        let data = {
+          chatRoomId: this.chatroom.id,
           type: "newmsg",
-          user: this.username,
-          message: this.data.message,
-          sendDate: Date()
-        });
+          user: this.user.username,
+          message: this.data.message
+        };
+        this.stompClient.send("/app/hello", JSON.stringify(data), {});
+        data.sendDate = new Date();
+        this.chats.push(data);
+        this.isTyping = true;
         this.data.message = "";
       }
       this.$nextTick(() => this.$refs.input_message.focus());
     },
     openSidebarBots() {
       this.$store.dispatch("setSelectedBot", null);
+    },
+    initWebSocket() {
+      var socket = new SockJS(services.STOP_API_URL + "stop-chatbot-websocket");
+      const options = { debug: false, heartbeat: false, protocols: ['v12.stomp'] }
+      this.stompClient = Stomp.over(socket, options);
+      this.stompClient.connect(
+        {},
+        frame => {
+          //this.connected = true;
+          console.log(frame);
+          this.stompClient.subscribe("/bot/response", tick => {
+            this.isTyping = false;
+            this.chats.push(JSON.parse(tick.body));
+          });
+        },
+        error => {
+          console.log(error.message);
+          //this.connected = false;
+        }
+      );
+    },
+    disconnect() {
+      if (this.stompClient) {
+        this.stompClient.disconnect();
+      }
+      // this.connected = false;
     }
     /*exitChat () {
       let exitData = firebase.database().ref('chatrooms/'+this.roomid+'/chats').push()
@@ -212,44 +277,13 @@ export default {
     }*/
   },
   created() {
-    
-    /*let joinData = firebase.database().ref('chatrooms/'+this.botid + '/' + this.username +'/chats').push();
-    joinData.set({
-      type: 'join',
-      user: this.username,
-      message: this.username + ' has joined this room.',
-      sendDate: Date()
-    });
-    this.data.message = '';*/
-
-    //this.loadmore()
-    firebase
-      .database()
-      .ref("chatrooms/" + this.branch + "/" + this.bot.id + "/" + this.username + "/chats")
-      .limitToLast(this.limit)
-      .on("value", snapshot => {
-        this.chats = [];
-        snapshot.forEach(doc => {
-          var item = doc.val();
-          if (item) {
-            item.key = doc.key;
-            this.chats.push(item);
-          }
-        });
-      });
-
-    firebase
-      .database()
-      .ref("bots/" + this.bot.id + "/typing")
-      .on("value", snapshot => {
-        this.isTyping = snapshot.val();
-      });
+    this.loadChatRoom();
   }
 };
 </script>
 <style scoped>
 .chat-background {
-  background-color: #e6e6e6;  
+  background-color: #e6e6e6;
   height: calc(100vh - 0px);
   position: relative;
 }

@@ -1,6 +1,6 @@
 <template>
-  <div class="chatroom-background">
-    <!--<sidebar/> -->   
+  <div class="chatroom-background" v-if="!loading">
+    <!--<sidebar/> -->
     <b-row class="main" :class="{ 'mobile' : isMobile}">
       <b-col cols="0" sm="0" xl="3" class="col" v-if="!isMobile">
         <sidebar-chats :branches="branches" :username="username" />
@@ -9,8 +9,7 @@
         <!--<admin-panel v-if="admin && adminPage" />
         <chat v-else-if="!adminPage && bot" :key="bot.id" :bot="bot" :username="username" />
         -->
-        <chat v-if="bot" :key="branch + '_' + bot.id" :bot="bot" :branch="branch" :username="username" />
-      
+        <chat v-if="bot" :key="bot.id" :bot="bot" :branch="branch" :user="user" />
         <div class="chat-void" v-else>
           <div class="logo-box">
             <b-img class="logo" alt="stop_logo" :src="logo"></b-img>
@@ -27,91 +26,43 @@
         </div>
       </b-col>
     </b-row>
-    
+
     <!--<div v-if="isMobile && !selectedBot && !adminPage" class="sidebar-mobile">-->
-      <div v-if="isMobile && !bot" class="sidebar-mobile">
-       <sidebar-chats :branches="branches" :username="username" />
+    <div v-if="isMobile && !bot" class="sidebar-mobile">
+      <sidebar-chats :branches="branches" :username="username" />
     </div>
-
-    <!--<div class="test-socket" @click="sendSocket()">
-        SEND
-
-    </div>-->
   </div>
 </template>
 
 <script>
-import firebase from "../config/firebase";
+import services from "@/config/services";
 
 import Chat from "@/components/Chat";
 import SidebarChats from "@/components/sidebar/SidebarChats";
-//import Sidebar from "@/components/sidebar/Sidebar";
-//import AdminPanel from "@/components/admin_panel/AdminPanel";
-// import { stringify } from 'querystring';
-
-
-//import SockJS from "sockjs-client";
-//import Stomp from "webstomp-client";
 
 export default {
   name: "ChatRoom",
   components: {
     Chat,
-    SidebarChats,
-    //Sidebar
-    //AdminPanel
+    SidebarChats
   },
   data() {
     return {
-      // botid: this.$route.params.roomid,
-      // botid: this.$store.state.botStore.selectedBot,
-      // username: this.$route.params.username,
-      // username: this.clearUsername(this.$store.getters.user.username),      
       branches: [],
+      user: null,
       admin: this.$store.getters.user.admin,
       logo: require("@/assets/stop_logo_grey.png"),
       stompClient: null
     };
   },
-  created() {    
-    //console.log(JSON.stringify(this.$store.getters.user.email))
-    //console.log(JSON.stringify(this.$store.getters.user.uid))
-
-    /*firebase
-      .database()
-      .ref("bots")
-      .on("value", snapshot => {
-        this.bots = [];
-        snapshot.forEach(doc => {
-          let item = doc.val();
-          item.id = doc.key;
-          if (!item.hidden) {
-            this.bots.push(item);
-          }
-        });
-      });*/
-
-      this.loadUserBranches()
-      
-   // alert(JSON.stringify(this.$store.getters.user.uid))
-
-
-
-      
-
-    /*const auth = firebase.auth()
-    auth.onAuthStateChanged(user => {
-      if(!user) {
-        this.$router.push('/login')
-      }
-    })*/
+  created() {
+    this.loadUser();
   },
   mounted() {
-    // this.testSocket()
   },
 
   computed: {
-    bot() {      
+    bot() {
       return this.$store.getters.selectedBot;
     },
     branch() {
@@ -126,33 +77,35 @@ export default {
       return this.$store.getters.adminPage;
     },*/
     username() {
-      var un = this.$store.getters.user.email;
-      if (!un) {
-        return null;
+      if (this.user !== null) {
+        return this.user.username;
+      } else {
+        return "";
       }
-      return this.clearUsername(un);
+    },
+    loading() {
+      return this.user == null;
     }
   },
   watch: {},
 
   methods: {
-    clearUsername(un) {
-      return un.replace("@fakemail.ie", "");
+    loadUser() {
+      var url = services.FIND_USER_BY_UID;
+      let uid = this.$store.getters.user.uid;
+      let user_uid = JSON.stringify(uid).replace(/"/g, "");
+      url = url.replace("{uid}", user_uid);
+      this.axios.get(url).then(response => {
+        this.user = response.data;
+        this.loadUserBranches(this.user.id);
+      });
     },
-    loadUserBranches() {
-      // console.log("load branches")
-      firebase
-        .database()
-        .ref("users")
-        .child(this.$store.getters.user.uid) 
-        .child("branches")
-        .on("value", snapshot => {
-          this.branches = []
-          snapshot.forEach(doc => {
-            this.branches.push(doc.val())
-          })
-          
-        });
+    loadUserBranches(userId) {
+      var url = services.FIND_BRANCHES_BY_USER;
+      url = url.replace("{userId}", userId);
+      this.axios.get(url).then(response => {
+        this.branches = response.data;
+      });
     }
     /*sendSocket() {
       var msg = {
@@ -173,7 +126,7 @@ export default {
           return new SockJS("http://localhost:8080/stop_api/secured/room/");
         });*/
 
-        /*this.stompClient.reconnect_delay = 5000;
+    /*this.stompClient.reconnect_delay = 5000;
 
         this.stompClient.connect({}, frame => {
             //this.connected = true;
@@ -193,7 +146,6 @@ export default {
 };
 </script>
 <style scoped>
-
 .chatroom-background {
   /*display: flex;*/
   width: 100%;
@@ -244,7 +196,6 @@ export default {
   opacity: 0.8;
 }
 
-
 /** CSS MOBILE */
 
 .main.mobile {
@@ -257,14 +208,7 @@ export default {
   top: 0;
   left: 80px;
   z-index: 100;
-
 }
-
-
-
-
-
-
 
 .test-socket {
   position: absolute;
@@ -272,7 +216,6 @@ export default {
   right: 50px;
   z-index: 1000;
   background-color: #fff;
-  padding:40px;
-
+  padding: 40px;
 }
 </style>
