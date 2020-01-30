@@ -210,8 +210,6 @@ export default {
   },*/
   mounted() {
     this.$root.$on("bv::modal::show", (bvEvent, modalId) => {
-      //this.$refs.form.reset();
-      //console.log(modalId + " -- " + this.modalid)
       if (modalId == this.modalid) {
         if (this.bot) {
           this.form = Object.assign({}, this.bot);

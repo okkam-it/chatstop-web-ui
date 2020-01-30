@@ -263,18 +263,6 @@ export default {
       }
       // this.connected = false;
     }
-    /*exitChat () {
-      let exitData = firebase.database().ref('chatrooms/'+this.roomid+'/chats').push()
-      exitData.set({
-        type: 'exit',
-        user: this.username,
-        message: this.username+' has exited this room.',
-        sendDate: Date()
-      })
-
-      this.offStatus = true
-      router.go(-1)
-    }*/
   },
   created() {
     this.loadChatRoom();

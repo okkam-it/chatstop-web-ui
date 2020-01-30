@@ -147,7 +147,6 @@
 </template>
 
 <script>
-import firebase from "@/config/firebase";
 import BotModal from "../components/admin_panel/modals/BotModal";
 import UserModal from "../components/admin_panel//modals/UserModal";
 import BranchModal from "../components/admin_panel/modals/BranchModal";
@@ -330,52 +329,41 @@ export default {
       this.$store.dispatch("setSelectedBot", null);
     },
     downloadCSV(bot) {
-      //console.log(botid);
-      //var chats = []
       var data = [];
       var ctx = this;
-      firebase
-        .database()
-        .ref("chatrooms/" + bot.id)
-        .once("value")
-        .then(function(snapshot) {
-          snapshot.forEach(doc => {
-            let item = doc.val();
-            // item.id = doc.key;
-            // console.log(doc.key);
-            //var chats = [];
-            var msgs = item.chats;
-            var i = 0;
-            for (var k in msgs) {
-              var msg = msgs[k];
-              msg["message_id"] = i;
-              msg["convesation_id"] = doc.key;
-              data.push(msg);
-              i++;
-              //console.log(JSON.stringify(msg));
-            }
-          });
-          var date = new Date();
-          var filename =
-            bot.name.replace(new RegExp(" ", "g"), "_") +
-            "_" +
-            date.getDay() +
-            "-" +
-            date.getMonth() +
-            "-" +
-            date.getFullYear() +
-            ".csv";
+      var url = services.FIND_CHATROOMS_BY_BOT.replace("{botId}", bot.id);
+      this.axios.get(url).then(response => {
+        let chatrooms = response.data;
+        for (var chatroom in chatrooms) {
+          var msgs = chatroom.chats;
+          var i = 0;
+          for (var k in msgs) {
+            var msg = msgs[k];
+            msg["message_id"] = i;
+            msg["convesation_id"] = chatroom.id;
+            data.push(msg);
+            i++;
+          }
+        }
+        var date = new Date();
+        var filename =
+          bot.name.replace(new RegExp(" ", "g"), "_") +
+          "_" +
+          date.getDay() +
+          "-" +
+          date.getMonth() +
+          "-" +
+          date.getFullYear() +
+          ".csv";
 
-          var csv = ctx.convertToCSV(JSON.stringify(data));
-          //console.log("Download: " + filename);
-          //console.log(csv);
-          var encodedUri = encodeURI(csv);
-          var link = document.createElement("a");
-          link.setAttribute("href", encodedUri);
-          link.setAttribute("download", filename);
-          document.body.appendChild(link); // Required for FF
-          link.click();
-        });
+        var csv = ctx.convertToCSV(JSON.stringify(data));
+        var encodedUri = encodeURI(csv);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", filename);
+        document.body.appendChild(link); // Required for FF
+        link.click();
+      });
     },
     convertToCSV(objArray) {
       if (!objArray || objArray.length == 0) {

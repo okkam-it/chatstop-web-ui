@@ -107,41 +107,6 @@ export default {
         this.branches = response.data;
       });
     }
-    /*sendSocket() {
-      var msg = {
-      'receiver': 'http://localhost:8080/stop_api/',
-      'sender': 'MAtte',
-      'text': "Hello Matteeee"
-    };
-      this.stompClient.send("ws://localhost:8080/stop_api/secured/room", {}, msg);
-    },
-    testSocket() {
-      // Create WebSocket connection.
-        console.log("Init socket")
-        var socket = new SockJS("http://localhost:8080/stop_api/stop/secured/");
-        // var socket = new SockJS("http://localhost:8080/secured/chat/");
-        this.stompClient = Stomp.over(socket);
-
-        /*var stompClient = Stomp.over(function(){
-          return new SockJS("http://localhost:8080/stop_api/secured/room/");
-        });*/
-
-    /*this.stompClient.reconnect_delay = 5000;
-
-        this.stompClient.connect({}, frame => {
-            //this.connected = true;
-            console.log(frame);
-            this.stompClient.subscribe('secured/user/queue/specific-user'
-            , function (msgOut) {
-              console.log("Msg out: " + msgOut)
-          })
-          },
-          error => {
-            console.log(error);
-            //this.connected = false;
-          }
-        );
-    }*/
   }
 };
 </script>
