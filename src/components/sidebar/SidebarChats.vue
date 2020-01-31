@@ -18,7 +18,9 @@
         <font-awesome-icon icon="search" class="fa-search" />
         <input v-model="search_string" class="input-field" type="text" />
         <div class="btn-add-code">
-          <p @click="showBranchCodeModal()">Add an invitation code</p>
+          <p @click="showBranchCodeModal()">
+            Add an invitation code
+          </p>
         </div>
       </div>
       <div class="bot-list">

@@ -76,7 +76,7 @@
                   />
                   <p>
                     {{ bot.name }}
-                    <br>
+                    <br />
                   </p>
                   <p class="btn-csv-download">
                     Download

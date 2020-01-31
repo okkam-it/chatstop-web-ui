@@ -1,33 +1,17 @@
 <template>
-  <div
-    class="chat-background"
-    :class="{ 'mobile' : isMobile}"
-  >
+  <div class="chat-background" :class="{ 'mobile' : isMobile}">
     <div class="chat-header">
       <b-row>
-        <b-col
-          v-if="isMobile"
-          cols="2"
-          @click="openSidebarBots()"
-        >
+        <b-col v-if="isMobile" cols="2" @click="openSidebarBots()">
           <div class="menu">
-            <font-awesome-icon
-              class="fa"
-              icon="bars"
-            />
+            <font-awesome-icon class="fa" icon="bars" />
           </div>
         </b-col>
         <b-col cols="10">
           <p>
             {{ bot.name }}
-            <span
-              v-if="bot.available"
-              class="bot-desc"
-            >
-              <font-awesome-icon
-                icon="circle"
-                class="fa-bot available"
-              />Online
+            <span v-if="bot.available" class="bot-desc">
+              <font-awesome-icon icon="circle" class="fa-bot available" />Online
             </span>
           </p>
         </b-col>
@@ -43,11 +27,7 @@
     >
       <transition name="fade">
         <b-list-group>
-          <b-list-group-item
-            v-for="(chat, index) in chats"
-            :key="index"
-            class="chat-item"
-          >
+          <b-list-group-item v-for="(chat, index) in chats" :key="index" class="chat-item">
             <!--<div class="chat-status text-center" v-if="chat.type==='join'||chat.type==='exit'">
               <span class="chat-date">{{chat.sendDate}}</span>
               <span class="chat-content-center">{{chat.message}}</span>
@@ -62,10 +42,7 @@
                   <span>{{ new Date(chat.sendDate).toLocaleDateString('default', { day: 'numeric', month: 'long', year: 'numeric' }) }}</span>
                 </p>
               </div>
-              <div
-                v-if="chat.user === user.username"
-                class="chat-message text-right"
-              >
+              <div v-if="chat.user === user.username" class="chat-message text-right">
                 <div class="bubble right-bubble">
                   <p text-wrap>
                     {{ chat.message }}
@@ -75,11 +52,7 @@
                   </div>
                 </div>
               </div>
-              <div
-                v-if="chat.user !== user.username"
-                class="chat-message text-left"
-                text-left
-              >
+              <div v-if="chat.user !== user.username" class="chat-message text-left" text-left>
                 <div class="bubble left-bubble">
                   <p text-wrap>
                     {{ chat.message }}
@@ -92,15 +65,8 @@
             </div>
           </b-list-group-item>
           <transition name="fade">
-            <b-list-group-item
-              v-if="isTyping"
-              key="loading"
-              class="chat-item chat-item-typing"
-            >
-              <div
-                class="chat-message chat-message-typing text-left"
-                text-left
-              >
+            <b-list-group-item v-if="isTyping" key="loading" class="chat-item chat-item-typing">
+              <div class="chat-message chat-message-typing text-left" text-left>
                 <div class="bubble left-bubble">
                   <div id="wave">
                     <span class="dot" />
@@ -114,19 +80,13 @@
         </b-list-group>
       </transition>
     </div>
-    <div
-      v-else
-      class="chat-box"
-    >
+    <div v-else class="chat-box">
       <p class="no-chats">
         <span>No conversation was found with this bot. Start writing now!</span>
       </p>
     </div>
     <footer class="chat-footer">
-      <b-form
-        autocomplete="off"
-        @submit="onSubmit"
-      >
+      <b-form autocomplete="off" @submit="onSubmit">
         <b-input-group>
           <b-form-input
             id="message"
@@ -136,11 +96,7 @@
             :disabled="!bot.available"
             placeholder="Enter your message"
           />
-          <b-button
-            type="submit"
-            :disabled="!bot.available"
-            class="send-button"
-          >
+          <b-button type="submit" :disabled="!bot.available" class="send-button">
             <font-awesome-icon icon="paper-plane" />
           </b-button>
         </b-input-group>

@@ -1,33 +1,14 @@
 <template>
-  <b-modal
-    :id="modalid"
-    v-model="state"
-    hide-footer
-    title="Edit user"
-  >
-    <b-form
-      v-if="showForm"
-      ref="form"
-      @submit="onSubmit"
-      @reset="onReset"
-    >
+  <b-modal :id="modalid" v-model="state" hide-footer title="Edit user">
+    <b-form v-if="showForm" ref="form" @submit="onSubmit" @reset="onReset">
       <b-form-group label="User account type:">
-        <b-form-select
-          v-model="form.admin"
-          :options="options"
-        />
+        <b-form-select v-model="form.admin" :options="options" />
       </b-form-group>
 
-      <b-button
-        class="save-button background-primary-color"
-        type="submit"
-      >
+      <b-button class="save-button background-primary-color" type="submit">
         Save User
       </b-button>
-      <div
-        v-if="msg_error"
-        class="error-box"
-      >
+      <div v-if="msg_error" class="error-box">
         <p>{{ msg_error }}</p>
       </div>
     </b-form>

@@ -1,22 +1,8 @@
 <template>
-  <b-modal
-    :id="modalid"
-    v-model="state"
-    hide-footer
-    :title="getModalTitle()"
-  >
-    <b-form
-      v-if="showForm"
-      ref="form"
-      @submit="onSubmit"
-      @reset="onReset"
-    >
+  <b-modal :id="modalid" v-model="state" hide-footer :title="getModalTitle()">
+    <b-form v-if="showForm" ref="form" @submit="onSubmit" @reset="onReset">
       <b-form-group label="User account type:">
-        <b-form-input
-          v-model.trim="form.name"
-          required
-          placeholder="Enter name"
-        />
+        <b-form-input v-model.trim="form.name" required placeholder="Enter name" />
       </b-form-group>
       <b-form-group label="Select bots:">
         <multiselect
@@ -31,16 +17,10 @@
         />
       </b-form-group>
 
-      <b-button
-        class="save-button background-primary-color"
-        type="submit"
-      >
+      <b-button class="save-button background-primary-color" type="submit">
         Save Branch
       </b-button>
-      <div
-        v-if="msg_error"
-        class="error-box"
-      >
+      <div v-if="msg_error" class="error-box">
         <p>{{ msg_error }}</p>
       </div>
     </b-form>

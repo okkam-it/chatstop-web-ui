@@ -10,6 +10,14 @@ module.exports = {
     "indent": ["error", 2],
     "quotes": [2, "double"],
     "space-before-function-paren": ["error", "never"],
-    "no-tabs": 0
+    "no-tabs": 0,
+    "vue/max-attributes-per-line": ["error", {
+      "singleline": 10,
+    }],
+    "vue/html-self-closing": ["error", {
+      "html": {
+        "void": "always",
+      }
+    }]
   }
 };
