@@ -1,7 +1,13 @@
 <template>
   <div v-if="branch" class="branch-box">
     <p class="branch-name">{{branch.name}}</p>
-    <item-bot v-for="bot in bots" :key="bot.id" :bot="bot" :branch="branch" :searchstring="searchstring" />
+    <item-bot
+      v-for="bot in bots"
+      :key="bot.id"
+      :bot="bot"
+      :branch="branch"
+      :searchstring="searchstring"
+    />
   </div>
 </template>
 
@@ -28,19 +34,28 @@ export default {
       required: true
     }
   },
-  methods: {},
-  watch: {},
+  methods: {
+    loadBranchBots() {
+      var url = services.FIND_BOTS_BY_BRANCH;
+      url = url.replace("{branchId}", this.branch.id);
+      this.axios
+        .get(url)
+        .then(response => {
+          this.bots = response.data;
+        })
+        .catch(e => {
+          this.msg_error = e.message;
+        });
+    }
+  },
+  watch: {
+    branch: function() {
+      this.loadBranchBots();
+      // console.log("Branch updated " + newBranch + " " + oldBranch);
+    }
+  },
   mounted() {
-    var url = services.FIND_BOTS_BY_BRANCH;
-    url = url.replace("{branchId}", this.branch.id);
-    this.axios
-      .get(url)
-      .then(response => {
-        this.bots = response.data;
-      })
-      .catch(e => {
-        this.msg_error = e.message;
-      });
+    this.loadBranchBots();
   },
   computed: {}
 };

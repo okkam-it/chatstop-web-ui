@@ -103,8 +103,6 @@
 
 <script>
 import services from "@/config/services";
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
 export default {
   name: "AddBoard",
   data() {
@@ -112,11 +110,11 @@ export default {
       data: { type: "", username: "", message: "" },
       chats: [],
       errors: [],
+      subscription: null,
       offStatus: false,
       isTyping: false,
       limit: 15,
       last_scroll_top: 0,
-      stompClient: null,
       //last_scroll_height: 0,
       last_x: 0,
       chatroom: {},
@@ -124,6 +122,10 @@ export default {
     };
   },
   props: {
+    stompClient: {
+      type: Object,
+      required: true
+    },
     bot: {
       type: Object,
       required: true
@@ -139,12 +141,12 @@ export default {
   },
   watch: {
     // whenever question changes, this function will run
-    bot: function (newBot, oldBot) {
+    bot: function(newBot, oldBot) {
       if (newBot.id !== oldBot.id) {
         this.loadChatRoom();
       }
     },
-    branch: function (newBranch, oldBranch) {
+    branch: function(newBranch, oldBranch) {
       if (newBranch.id !== oldBranch.id) {
         this.loadChatRoom();
       }
@@ -175,7 +177,7 @@ export default {
       this.$refs.chatbox.scrollTop = s;
     },
     loadChatRoom() {
-      this.initWebSocket();
+      this.subscribeChatRoom();
       var url = services.FIND_CHATROOM;
       url = url
         .replace("{userId}", this.user.id)
@@ -238,7 +240,11 @@ export default {
           user: this.user.username,
           message: this.data.message
         };
-        this.stompClient.send("/app/hello", JSON.stringify(data), {});
+        this.stompClient.send(
+          "/app/bot/request/" + this.chatroom.id,
+          JSON.stringify(data),
+          {}
+        );
         data.sendDate = new Date();
         this.chats.push(data);
         this.isTyping = true;
@@ -249,34 +255,18 @@ export default {
     openSidebarBots() {
       this.$store.dispatch("setSelectedBot", null);
     },
-    initWebSocket() {
-      // disconnect older connections, if found
-      this.disconnect();
-      var socket = new SockJS(services.STOP_API_URL + "stop-chatbot-websocket");
-      const options = { debug: false, heartbeat: false, protocols: ['v12.stomp'] }
-      this.stompClient = Stomp.over(socket, options);
-      this.stompClient.connect(
-        {},
-        frame => {
-          //this.connected = true;
-          console.log(frame);
-          this.stompClient.subscribe("/bot/response", tick => {
-            this.isTyping = false;
-            this.chats.push(JSON.parse(tick.body));
-            console.log(this.chats.length);
-          });
-        },
-        error => {
-          console.log(error.message);
-          //this.connected = false;
-        }
-      );
+    subscribeChatRoom() {
+      // unsubscribe older connections, if found
+      this.unsubscribe();
+      this.subscription = this.stompClient.subscribe("/bot/response", tick => {
+        this.isTyping = false;
+        this.chats.push(JSON.parse(tick.body));
+      });
     },
-    disconnect() {
-      if (this.stompClient) {
-        this.stompClient.disconnect();
+    unsubscribe() {
+      if (this.subscription) {
+        this.subscription.unsubscribe();
       }
-      // this.connected = false;
     }
   },
   created() {
