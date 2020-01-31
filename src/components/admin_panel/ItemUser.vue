@@ -2,7 +2,7 @@
   <b-list-group-item :class="{disabled : user.uid == selectedUser.uid}">
     <b-row class="row">
       <b-col cols="8" lg="6">
-        <span class="user-name">{{user.username.replace("@fakemail.ie", "")}}</span>
+        <span class="user-name">{{user.username}}</span>
       </b-col>
       <b-col cols="4" lg="4" >
         <b-badge pill v-if="user.admin">
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-//import firebase from "../../config/firebase";
 export default {
   name: "ItemBot",
   data() {

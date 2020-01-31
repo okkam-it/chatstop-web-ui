@@ -1,12 +1,12 @@
 <template>
   <div v-if="branch" class="branch-box">
     <p class="branch-name">{{branch.name}}</p>
-    <item-bot v-for="bot in branch.bots" :key="bot" :botid="bot" :branch="branch.id" :searchstring="searchstring"/>
+    <item-bot v-for="bot in bots" :key="bot.id" :bot="bot" :branch="branch" :searchstring="searchstring" />
   </div>
 </template>
 
 <script>
-import firebase from "@/config/firebase";
+import services from "@/config/services";
 import ItemBot from "./ItemBot";
 export default {
   name: "ItemBranch",
@@ -15,12 +15,12 @@ export default {
   },
   data() {
     return {
-      branch: null
+      bots: []
     };
   },
   props: {
-    branchid: {
-      type: String,
+    branch: {
+      type: Object,
       required: true
     },
     searchstring: {
@@ -31,13 +31,15 @@ export default {
   methods: {},
   watch: {},
   mounted() {
-    firebase
-      .database()
-      .ref("branches")
-      .child(this.branchid)
-      .on("value", snapshot => {
-        this.branch = snapshot.val();
-        this.branch.id = snapshot.key
+    var url = services.FIND_BOTS_BY_BRANCH;
+    url = url.replace("{branchId}", this.branch.id);
+    this.axios
+      .get(url)
+      .then(response => {
+        this.bots = response.data;
+      })
+      .catch(e => {
+        this.msg_error = e.message;
       });
   },
   computed: {}
@@ -45,7 +47,7 @@ export default {
 </script>
 <style scoped>
 .branch-box {
-  margin-bottom:20px;
+  margin-bottom: 20px;
 }
 
 .branch-name {

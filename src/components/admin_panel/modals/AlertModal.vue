@@ -36,7 +36,7 @@ export default {
       this.state = false;
     },
     confirm() {
-        this.$emit("confirm") 
+        this.$emit("confirm");
         this.state = false;
     }    
 

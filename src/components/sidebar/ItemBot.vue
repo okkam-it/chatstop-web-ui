@@ -1,12 +1,12 @@
 <template>
   <div class="box" @click="selectBot()" :class="{ selected: isSelected}" v-if="bot && showItem">
     <!--<b-img class="bot-image background-primary-color" src="https://via.placeholder.com/150/4f94c2/ffffff?text=BOT" />-->
-    <font-awesome-icon class="fa-bot-logo" icon="robot"/>
+    <font-awesome-icon class="fa-bot-logo" icon="robot" />
     <div>
       <p class="bot-name">{{bot.name}}</p>
       <span class="bot-desc" v-if="bot.available">
         <font-awesome-icon icon="circle" class="fa-bot available" />Online
-      </span> 
+      </span>
       <span class="bot-desc" v-else>
         <font-awesome-icon icon="circle" class="fa-bot" />Offline
       </span>
@@ -15,23 +15,20 @@
 </template>
 
 <script>
-import firebase from "@/config/firebase";
 export default {
   name: "ItemBot",
   data() {
     return {
-      bot: null,   
-      bot_image: require("@/assets/marker.png"),
-      
+      bot_image: require("@/assets/marker.png")
     };
   },
   props: {
-    botid: {
-      type: String,
+    bot: {
+      type: Object,
       required: true
     },
     branch: {
-      type: String,
+      type: Object,
       required: true
     },
     searchstring: {
@@ -42,51 +39,35 @@ export default {
       type: String      
     }*/
   },
-  created() {
-    firebase
-      .database()
-      .ref("bots")
-      .child(this.botid)
-      .on("value", snapshot => {
-        var id = snapshot.key
-        this.bot = snapshot.val();
-        this.bot.id = id;
-      });
-  },
+  created() {},
   methods: {
-    
-    selectBot() {   
-      if(this.bot.available) {
-        var data = {
-          bot: this.bot,
-          branch: this.branch
-        }        
-        this.$store.dispatch("setSelectedBot", data);
+    selectBot() {
+      if (this.bot.available) {
+        this.$store.dispatch("setSelectedBot", this.bot);
+        this.$store.dispatch("setSelectedBranch", this.branch);
       } else {
-        alert("Bot unavailable!")
+        alert("Bot unavailable!");
       }
-      
-    },
-    
-  }, 
-  watch: {
-    
+    }
   },
+  watch: {},
   computed: {
-    isSelected () {
-      var sbot = this.$store.getters.selectedBot
-      var sbrach = this.$store.getters.selectedBranch
-      if((sbot && sbot.id == this.botid) && (sbrach && sbrach == this.branch) ) {
-          return true 
+    isSelected() {
+      var sbot = this.$store.getters.selectedBot;
+      var sbranch = this.$store.getters.selectedBranch;
+      if (
+        sbot &&
+        sbot.id === this.bot.id &&
+        sbranch && sbranch.id === this.branch.id
+      ) {
+        return true;
       }
-      return false
+      return false;
     },
     showItem() {
       var bot = this.bot;
-
       var s = this.searchstring;
-
-      if(s.length && !bot.name.toLowerCase().includes(s.toLowerCase())) {
+      if (s.length && !bot.name.toLowerCase().includes(s.toLowerCase())) {
         return false;
       }
 
@@ -164,17 +145,16 @@ export default {
   margin-right: 5px;
 }
 
-.fa-bot.available{
+.fa-bot.available {
   font-size: 8px;
   color: #206020;
-  
 }
 
 .fa-bot-logo {
   font-size: 45px;
   color: #f2f2f2;
   background-color: #4f94c2;
-  padding:10px;
+  padding: 10px;
   padding-top: 6px;
   border-radius: 100%;
   height: 50px;

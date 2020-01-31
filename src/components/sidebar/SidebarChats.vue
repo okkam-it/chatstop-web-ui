@@ -22,7 +22,7 @@
         </div>
       </div>
       <div class="bot-list">
-        <item-branch v-for="(branch, key) in branches" :key="key" :branchid="branch" :searchstring="search_string"/>
+        <item-branch v-for="(branch, key) in branches" :key="key" :branch="branch" :searchstring="search_string"/>
         <!--<p class="branch-name">Sentiment analysys</p>
         <item-bot v-for="bot in filteredBots" :key="bot.id" :bot="bot" />-->
       </div>
@@ -32,7 +32,7 @@
         <font-awesome-icon class="fa" icon="cog" />Admin Panel
       </p>
     </div>-->
-    <branch-code-modal ref="branchCodeModal"/>
+    <branch-code-modal ref="branchCodeModal" @update-branches="updateBranches()"/>
   </div>
 </template>
 
@@ -71,6 +71,9 @@ export default {
     },
     showBranchCodeModal() {
       this.$refs.branchCodeModal.show();
+    },
+    updateBranches() {
+      this.$emit("update-branches");
     }
   },
   computed: {

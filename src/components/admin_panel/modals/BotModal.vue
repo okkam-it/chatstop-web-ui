@@ -16,7 +16,11 @@
 
         <b-row>
           <b-col cols="8">
-            <b-form-input v-model.trim="form.address.ip" required placeholder="ip e.g. xxx.x.x.x:xxxx"></b-form-input>
+            <b-form-input
+              v-model.trim="form.address.ip"
+              required
+              placeholder="ip e.g. xxx.x.x.x:xxxx"
+            ></b-form-input>
           </b-col>
           <b-col cols="4">
             <b-form-input
@@ -30,11 +34,11 @@
         <!-- <b-form-input id="input-2" v-model="form['api-url']" required placeholder="e.g. http://xxx.x.x.x:xxxx/api/bot-response"></b-form-input>-->
       </b-form-group>
 
-      <b-form-group label="API Address">
+      <b-form-group label="API Path">
         <b-form-input
-          v-model="form.address.api"
+          v-model="form.address.path"
           required
-          placeholder="API address e.g. /getResponse/"
+          placeholder="API path e.g. /getResponse/"
         ></b-form-input>
       </b-form-group>
 
@@ -42,9 +46,9 @@
         <!--<b-form-checkbox v-model="form.available">Available</b-form-checkbox>-->
         <!--<b-form-checkbox v-model="form.hidden">Hidden</b-form-checkbox>
         <b-form-checkbox v-model="form.hidden">Hidden</b-form-checkbox>-->
-        <b-form-radio v-model="form.showTo" value="None">Hidden</b-form-radio>
-        <b-form-radio v-model="form.showTo" value="Admin">Show only to admin</b-form-radio>
-        <b-form-radio v-model="form.showTo" value="All">Show to all users</b-form-radio>
+        <b-form-radio v-model="form.showTo" value="NONE">Hidden</b-form-radio>
+        <b-form-radio v-model="form.showTo" value="ADMIN">Show only to admin</b-form-radio>
+        <b-form-radio v-model="form.showTo" value="ALL">Show to all users</b-form-radio>
       </b-form-group>
 
       <b-button class="save-button background-primary-color" type="submit">Save Bot</b-button>
@@ -56,7 +60,7 @@
 </template>
 
 <script>
-import firebase from "../../../config/firebase";
+import services from "@/config/services";
 export default {
   name: "BotModal",
   data() {
@@ -111,16 +115,16 @@ export default {
     getDefaultForm() {
       return {
         name: "",
-        showTo: "None",
+        showTo: "NONE",
         address: {
           ip: "",
           port: "",
-          api: "/chatstop/bot_request/"
+          path: "/chatstop/bot_request/"
         }
       };
     },
     clearFormValues() {
-      var api = this.form.address.api.trim();
+      var api = this.form.address.path.trim();
       var start = 0;
       var end = api.length;
 
@@ -130,7 +134,7 @@ export default {
       if (api.charAt(end - 1) == "/") {
         end--;
       }
-      this.form.address.api = api.substring(start, end);
+      this.form.address.path = api.substring(start, end);
       this.form.address.ip = this.form.address.ip
         .replace("http://", "")
         .replace("https://", "");
@@ -148,42 +152,37 @@ export default {
       var data = {
         name: this.form.name,
         // description: "",
-        created: Date(),
-        lastEdit: Date(),
-        typing: false,
-        showTo: this.form.showTo || "None",
-        //"api-url": this.form["api-url"],
         address: this.form.address,
+        showTo: this.form.showTo || "NONE",
         available: false
       };
-
-      let newData = firebase
-        .database()
-        .ref("bots")
-        .push();
-      newData.set(data, function(error) {
-        if (error) {
-          this.msg_error = error.message;
-        } else {
+      this.axios
+        .post(services.CREATE_BOT, data)
+        .then(response => {
+          this.$emit("update");
+          response.data;
           ctx.closeModal();
-        }
-      });
+        })
+        .catch(e => {
+          this.msg_error = e.message;
+        });
     },
     saveEditedBot() {
       var ctx = this;
       var data = this.form;
       var id = this.form.id;
-      delete data.id;
       data.lastEdit = Date();
-      firebase
-        .database()
-        .ref("bots/" + id)
-        .set(data, function(error) {
-          if (error) {
-            this.msg_error = error.message;
-          } else {
-            ctx.closeModal();
-          }
+      var url = services.UPDATE_BOT;
+      url = url.replace("{botId}", id);
+      this.axios
+        .put(url, data)
+        .then(response => {
+          this.$emit("update");
+          response.data;
+          ctx.closeModal();
+        })
+        .catch(e => {
+          this.msg_error = e.message;
         });
     }
   },
@@ -211,8 +210,6 @@ export default {
   },*/
   mounted() {
     this.$root.$on("bv::modal::show", (bvEvent, modalId) => {
-      //this.$refs.form.reset();
-      //console.log(modalId + " -- " + this.modalid)
       if (modalId == this.modalid) {
         if (this.bot) {
           this.form = Object.assign({}, this.bot);

@@ -1,9 +1,22 @@
 import firebase from '@/config/firebase'
+import services from '@/config/services'
+import axios from "axios";
 const state = {
     user: null,
     status: null,
     error: null
 };
+
+function createUser(uid, username, email) {
+    var data = {
+        uid: uid,
+        username: username,
+        email: email,
+        // TODO: set it to false
+        admin: true
+    };
+    return data;
+}
 
 const actions = {
     setUser({ commit }, payload) {
@@ -16,46 +29,35 @@ const actions = {
         commit('setStatus', payload)
     },
 
-    signUpAction({ commit }, payload) {
+    signUpAction({ commit, dispatch }, payload) {
         commit('setStatus', 'loading')
         var email = payload.username + "@fakemail.ie"
         firebase.auth().createUserWithEmailAndPassword(email, payload.password)
             .then((response) => {
-                // alert('success')
-                // response will have user
-                // user will have uid will be updated to the state
-                commit('setUser', response.user)
-                commit('setStatus', 'success')
-                commit('setError', null)
-
-                /*firebase
-                    .database()
-                    .ref("users/" + response.user.uid).set({
-                        admin: false
-                    });*/
+                // create user in stop DB
+                let user = createUser(response.user.uid, payload.username, email);
+                dispatch('createDbUserIfNotFound', user);
             })
             .catch((error) => {
                 commit('setStatus', 'failure')
                 commit('setError', error.message)
             })
-    },    
+    },
 
-    signInAction: ({ commit }, payload) => {
+    signInAction: ({ commit, dispatch }, payload) => {
         commit('setStatus', 'loading')
-        var email = payload.username + "@fakemail.ie"        
+        var email = payload.username + "@fakemail.ie"
         firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION) //with LOCAL will be persisted even when the browser window is closed
             .then(function () {
-
                 return firebase.auth().signInWithEmailAndPassword(email, payload.password)
-                    .then(() => {                       
-                        
-
-                    })
-                    .catch((error) => {
-                        commit('setStatus', 'failure')
-                        commit('setError', error.message)
-                    })
-
+                    .then((response) => {
+                        let user = createUser(response.user.uid, payload.username, email);
+                        dispatch('createDbUserIfNotFound', user);
+                    });
+            })
+            .catch((error) => {
+                commit('setStatus', 'failure')
+                commit('setError', error.message)
             })
             .catch(function (error) {
                 // Handle Errors here.
@@ -68,7 +70,6 @@ const actions = {
     signOutAction({ commit }) {
         firebase.auth().signOut()
             .then((response) => {
-
                 commit('setUser', null)
                 commit('setStatus', 'success')
                 commit('setError', null)
@@ -77,6 +78,18 @@ const actions = {
                 commit('setStatus', 'failure')
                 commit('setError', error.message)
             })
+    },
+    createDbUserIfNotFound({ commit }, user_data) {
+        axios.post(services.CREATE_USER, user_data)
+            .then(response => {
+                commit('setStatus', 'success')
+                commit('setError', null)
+                return response;
+            })
+            .catch(error => {
+                commit('setStatus', 'failure')
+                commit('setError', error.message)
+            });
     }
     /* eslint-enable */
 };
@@ -112,7 +125,6 @@ const mutations = {
         state.error = payload
     }
 };
-
 
 export default {
     state,

@@ -2,15 +2,19 @@
   <b-modal v-model="state" hide-footer :title="getModalTitle()" :id="modalid">
     <b-form ref="form" @submit="onSubmit" @reset="onReset" v-if="showForm">
       <b-form-group label="User account type:">
-        <b-form-input
-          v-model.trim="form.name"
-          required
-          placeholder="Enter name"
-        ></b-form-input>
+        <b-form-input v-model.trim="form.name" required placeholder="Enter name"></b-form-input>
       </b-form-group>
       <b-form-group label="Select bots:">
-        <multiselect :multiple="true" v-model="form.bots" :options="bots" :close-on-select="true" label="name" track-by="id" :hide-selected="true"
-        :show-labels="false"></multiselect>
+        <multiselect
+          :multiple="true"
+          v-model="form.bots"
+          :options="bots"
+          :close-on-select="true"
+          label="name"
+          track-by="id"
+          :hide-selected="true"
+          :show-labels="false"
+        ></multiselect>
       </b-form-group>
 
       <b-button class="save-button background-primary-color" type="submit">Save Branch</b-button>
@@ -22,7 +26,7 @@
 </template>
 
 <script>
-import firebase from "../../../config/firebase";
+import services from "@/config/services";
 export default {
   name: "UserModal",
   data() {
@@ -40,7 +44,7 @@ export default {
     },
     bots: {
       type: Array
-    },
+    }
   },
   methods: {
     getModalTitle() {
@@ -64,7 +68,7 @@ export default {
       evt.preventDefault();
       this.saveBranch();
     },
-    saveBranch() {      
+    saveBranch() {
       if (this.form.id) {
         this.saveEditedBranch();
       } else {
@@ -86,53 +90,50 @@ export default {
     },
     getDefaultForm() {
       return {
-        name: '',
+        name: "",
         bots: []
       };
     },
 
     saveNewBranch() {
-      var ctx = this;   
+      var ctx = this;
 
       var data = {
-          name: this.form.name,
-          bots: this.form.bots.map(a => a.id),
-          created: Date(),
-          lastEdit: Date(),
-          // code: this.generateInvitationCode()
-      }    
-      
-
-      firebase
-        .database()
-        .ref("branches")
-        .push()
-        .set(data, function(error) {
-          if (error) {
-            this.msg_error = error.message;
-          } else {
-            ctx.closeModal();
-          }
+        name: this.form.name,
+        bots: this.form.bots.map(a => a.id),
+        created: Date(),
+        lastEdit: Date()
+        // code: this.generateInvitationCode()
+      };
+      this.axios
+        .post(services.CREATE_BRANCH, data)
+        .then(response => {
+          this.$emit("update");
+          response.data;
+          ctx.closeModal();
+        })
+        .catch(e => {
+          this.msg_error = e.message;
         });
     },
-    
+
     saveEditedBranch() {
       var ctx = this;
       var data = this.form;
-      data.bots = this.form.bots.map(a => a.id)   
-      data.lastEdit = Date()   
-      var id = this.form.id;
-      delete data.id;
+      data.bots = this.form.bots.map(a => a.id);
       data.lastEdit = Date();
-      firebase
-        .database()
-        .ref("branches/" + id)
-        .set(data, function(error) {
-          if (error) {
-            this.msg_error = error.message;
-          } else {
-            ctx.closeModal();
-          }
+      var id = this.form.id;
+      var url = services.UPDATE_BRANCH;
+      url = url.replace("{branchId}", id);
+      this.axios
+        .put(url, data)
+        .then(response => {
+          this.$emit("update");
+          response.data;
+          ctx.closeModal();
+        })
+        .catch(e => {
+          this.msg_error = e.message;
         });
     }
   },
@@ -143,7 +144,7 @@ export default {
       } else {
         this.form = this.getDefaultForm();
       }
-    }   */ 
+    }   */
   },
   /*computed: {
     selectedOptionUserType() {
@@ -158,22 +159,20 @@ export default {
   },*/
   mounted() {
     this.$root.$on("bv::modal::show", (bvEvent, modalId) => {
-        
       if (modalId == this.modalid) {
         if (this.branch) {
           this.form = Object.assign({}, this.branch);
-          var botsobj = []    
-          var ctx = this
-          this.form.bots.forEach((bot) => {   
-              var b = ctx.bots.find(obj => {
-                return obj.id === bot
-            })
-            if(b) {
-               botsobj.push(b) 
+          var botsobj = [];
+          var ctx = this;
+          this.form.bots.forEach(bot => {
+            var b = ctx.bots.find(obj => {
+              return obj.id === bot;
+            });
+            if (b) {
+              botsobj.push(b);
             }
-          });         
+          });
           this.form.bots = botsobj;
-          
         } else {
           this.form = this.getDefaultForm();
         }

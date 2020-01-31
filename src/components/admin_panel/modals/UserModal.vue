@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import firebase from "../../../config/firebase";
+import services from "@/config/services";
 export default {
   name: "UserModal",
   data() {
@@ -27,7 +27,7 @@ export default {
       options: [
         { value: false, text: "User" },
         { value: true, text: "Admin" }
-      ],
+      ]
     };
   },
   props: {
@@ -75,18 +75,17 @@ export default {
         admin: this.form.admin,
         username: this.user.username
       };
-      
 
-      firebase
-        .database()
-        .ref("users")
-        .child(this.user.uid)
-        .set(data, function(error) {
-          if (error) {
-            this.msg_error = error.message;
-          } else {
-            ctx.closeModal();
-          }
+      var url = services.UPDATE_USER;
+      url = url.replace("{userId}", this.user.id);
+      this.axios
+        .put(url, data)
+        .then(function() {
+          this.$emit("update");
+          ctx.closeModal();
+        })
+        .catch(e => {
+          this.msg_error = e.message;
         });
     }
   },
@@ -97,7 +96,7 @@ export default {
       } else {
         this.form = this.getDefaultForm();
       }
-    }    
+    }
   },
   /*computed: {
     selectedOptionUserType() {

@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import firebase from "../../../config/firebase";
+import services from "@/config/services";
 export default {
   name: "BranchCodeModal",
   data() {
@@ -42,10 +42,11 @@ export default {
       evt.preventDefault();
       this.addBranch().then(res => {
         if (!res) {
-            this.closeModal();            
-          } else {
-            this.msg_error = res;
-          }
+          this.$emit("update-branches");
+          this.closeModal();
+        } else {
+          this.msg_error = res;
+        }
       });
     },
     onReset(evt) {
@@ -64,45 +65,23 @@ export default {
     },
     async addBranch() {
       var branch_code = this.code;
+      // alert(JSON.stringify(this.$store.getters.user));
+      var userid = this.$store.getters.user.uid;
+      var url = services.ADD_BRANCH_TO_USER;
+      url = url.replace("{userId}", userid) + branch_code;
       if (branch_code) {
-        var branches_ref = firebase
-          .database()
-          .ref("branches")
-          .child(this.code);
-
-        var branch_snap = await branches_ref.once("value");
-
-        if (branch_snap.val()) {
-          var user_ref = firebase
-            .database()
-            .ref("users")
-            .child(this.$store.getters.user.uid)
-            .child("branches");
-          var user_branches_snap = await user_ref.once("value");
-          var list = user_branches_snap.val();
-          if (!list) {
-            list = [];
-          }
-          
-          if(list.includes(this.code)) {
-            return "This code already exists."
-          }
-
-          list.push(branch_code);
-          var res = user_ref.set(list);
-          if(res) {
+        this.axios
+          .post(url)
+          .then(function() {
             return null;
-          } else {
-            return "Error";
-          }
-          
-        } else {
-          return "Invalid code"
-        }
+          })
+          .catch(e => {
+            return e.message;
+          });
       } else {
-        return "Invalid code"
-      }           
-    }    
+        return "Invalid code";
+      }
+    }
   },
   watch: {},
 
