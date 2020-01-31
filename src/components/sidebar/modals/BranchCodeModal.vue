@@ -1,13 +1,35 @@
 <template>
-  <b-modal v-model="state" hide-footer title="Add an invitation code" :id="modalid">
-    <b-form ref="form" @submit="onSubmit" @reset="onReset" v-if="showForm">
+  <b-modal
+    :id="modalid"
+    v-model="state"
+    hide-footer
+    title="Add an invitation code"
+  >
+    <b-form
+      v-if="showForm"
+      ref="form"
+      @submit="onSubmit"
+      @reset="onReset"
+    >
       <b-form-group>
-        <b-form-input v-model.trim="code" required placeholder="Enter code"></b-form-input>
+        <b-form-input
+          v-model.trim="code"
+          required
+          placeholder="Enter code"
+        />
       </b-form-group>
 
-      <b-button class="save-button background-primary-color" type="submit">Add Code</b-button>
-      <div class="error-box" v-if="msg_error">
-        <p>{{msg_error}}</p>
+      <b-button
+        class="save-button background-primary-color"
+        type="submit"
+      >
+        Add Code
+      </b-button>
+      <div
+        v-if="msg_error"
+        class="error-box"
+      >
+        <p>{{ msg_error }}</p>
       </div>
     </b-form>
   </b-modal>
@@ -17,6 +39,7 @@
 import services from "@/config/services";
 export default {
   name: "BranchCodeModal",
+  props: {},
   data() {
     return {
       modalid: "modal-add-branch",
@@ -26,7 +49,9 @@ export default {
       code: null
     };
   },
-  props: {},
+  watch: {},
+
+  mounted() {},
   methods: {
     show() {
       this.state = true;
@@ -82,10 +107,7 @@ export default {
         return "Invalid code";
       }
     }
-  },
-  watch: {},
-
-  mounted() {}
+  }
 };
 </script>
 <style scoped>

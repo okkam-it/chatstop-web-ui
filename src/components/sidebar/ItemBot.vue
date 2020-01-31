@@ -1,14 +1,36 @@
 <template>
-  <div class="box" @click="selectBot()" :class="{ selected: isSelected}" v-if="bot && showItem">
+  <div
+    v-if="bot && showItem"
+    class="box"
+    :class="{ selected: isSelected}"
+    @click="selectBot()"
+  >
     <!--<b-img class="bot-image background-primary-color" src="https://via.placeholder.com/150/4f94c2/ffffff?text=BOT" />-->
-    <font-awesome-icon class="fa-bot-logo" icon="robot" />
+    <font-awesome-icon
+      class="fa-bot-logo"
+      icon="robot"
+    />
     <div>
-      <p class="bot-name">{{bot.name}}</p>
-      <span class="bot-desc" v-if="bot.available">
-        <font-awesome-icon icon="circle" class="fa-bot available" />Online
+      <p class="bot-name">
+        {{ bot.name }}
+      </p>
+      <span
+        v-if="bot.available"
+        class="bot-desc"
+      >
+        <font-awesome-icon
+          icon="circle"
+          class="fa-bot available"
+        />Online
       </span>
-      <span class="bot-desc" v-else>
-        <font-awesome-icon icon="circle" class="fa-bot" />Offline
+      <span
+        v-else
+        class="bot-desc"
+      >
+        <font-awesome-icon
+          icon="circle"
+          class="fa-bot"
+        />Offline
       </span>
     </div>
   </div>
@@ -17,11 +39,6 @@
 <script>
 export default {
   name: "ItemBot",
-  data() {
-    return {
-      bot_image: require("@/assets/marker.png")
-    };
-  },
   props: {
     bot: {
       type: Object,
@@ -39,18 +56,11 @@ export default {
       type: String      
     }*/
   },
-  created() {},
-  methods: {
-    selectBot() {
-      if (this.bot.available) {
-        this.$store.dispatch("setSelectedBot", this.bot);
-        this.$store.dispatch("setSelectedBranch", this.branch);
-      } else {
-        alert("Bot unavailable!");
-      }
-    }
+  data() {
+    return {
+      bot_image: require("@/assets/marker.png")
+    };
   },
-  watch: {},
   computed: {
     isSelected() {
       var sbot = this.$store.getters.selectedBot;
@@ -81,6 +91,18 @@ export default {
         }
       } else {
         return true;
+      }
+    }
+  },
+  watch: {},
+  created() {},
+  methods: {
+    selectBot() {
+      if (this.bot.available) {
+        this.$store.dispatch("setSelectedBot", this.bot);
+        this.$store.dispatch("setSelectedBranch", this.branch);
+      } else {
+        alert("Bot unavailable!");
       }
     }
   }

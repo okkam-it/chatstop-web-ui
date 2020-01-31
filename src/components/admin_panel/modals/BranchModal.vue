@@ -1,25 +1,47 @@
 <template>
-  <b-modal v-model="state" hide-footer :title="getModalTitle()" :id="modalid">
-    <b-form ref="form" @submit="onSubmit" @reset="onReset" v-if="showForm">
+  <b-modal
+    :id="modalid"
+    v-model="state"
+    hide-footer
+    :title="getModalTitle()"
+  >
+    <b-form
+      v-if="showForm"
+      ref="form"
+      @submit="onSubmit"
+      @reset="onReset"
+    >
       <b-form-group label="User account type:">
-        <b-form-input v-model.trim="form.name" required placeholder="Enter name"></b-form-input>
+        <b-form-input
+          v-model.trim="form.name"
+          required
+          placeholder="Enter name"
+        />
       </b-form-group>
       <b-form-group label="Select bots:">
         <multiselect
-          :multiple="true"
           v-model="form.bots"
+          :multiple="true"
           :options="bots"
           :close-on-select="true"
           label="name"
           track-by="id"
           :hide-selected="true"
           :show-labels="false"
-        ></multiselect>
+        />
       </b-form-group>
 
-      <b-button class="save-button background-primary-color" type="submit">Save Branch</b-button>
-      <div class="error-box" v-if="msg_error">
-        <p>{{msg_error}}</p>
+      <b-button
+        class="save-button background-primary-color"
+        type="submit"
+      >
+        Save Branch
+      </b-button>
+      <div
+        v-if="msg_error"
+        class="error-box"
+      >
+        <p>{{ msg_error }}</p>
       </div>
     </b-form>
   </b-modal>
@@ -29,6 +51,20 @@
 import services from "@/config/services";
 export default {
   name: "UserModal",
+  props: {
+    branch: {
+      default: function() {
+        return {};
+      },
+      type: Object
+    },
+    bots: {
+      default: function() {
+        return [];
+      },
+      type: Array
+    }
+  },
   data() {
     return {
       modalid: "modal-branch",
@@ -38,13 +74,47 @@ export default {
       msg_error: null
     };
   },
-  props: {
-    branch: {
-      type: Object
-    },
-    bots: {
-      type: Array
+  watch: {
+    /*user() {
+      if (this.branch) {
+        this.form = Object.assign({}, this.branch);
+      } else {
+        this.form = this.getDefaultForm();
+      }
+    }   */
+  },
+  /*computed: {
+    selectedOptionUserType() {
+      var f = this.form;
+      console.log(JSON.stringify(f))
+      if (f.admin) {
+        return this.options[1].value;
+      } else {
+        return this.options[0].value;
+      }
     }
+  },*/
+  mounted() {
+    this.$root.$on("bv::modal::show", (bvEvent, modalId) => {
+      if (modalId == this.modalid) {
+        if (this.branch) {
+          this.form = Object.assign({}, this.branch);
+          var botsobj = [];
+          var ctx = this;
+          this.form.bots.forEach(bot => {
+            var b = ctx.bots.find(obj => {
+              return obj.id === bot;
+            });
+            if (b) {
+              botsobj.push(b);
+            }
+          });
+          this.form.bots = botsobj;
+        } else {
+          this.form = this.getDefaultForm();
+        }
+      }
+    });
   },
   methods: {
     getModalTitle() {
@@ -136,48 +206,6 @@ export default {
           this.msg_error = e.message;
         });
     }
-  },
-  watch: {
-    /*user() {
-      if (this.branch) {
-        this.form = Object.assign({}, this.branch);
-      } else {
-        this.form = this.getDefaultForm();
-      }
-    }   */
-  },
-  /*computed: {
-    selectedOptionUserType() {
-      var f = this.form;
-      console.log(JSON.stringify(f))
-      if (f.admin) {
-        return this.options[1].value;
-      } else {
-        return this.options[0].value;
-      }
-    }
-  },*/
-  mounted() {
-    this.$root.$on("bv::modal::show", (bvEvent, modalId) => {
-      if (modalId == this.modalid) {
-        if (this.branch) {
-          this.form = Object.assign({}, this.branch);
-          var botsobj = [];
-          var ctx = this;
-          this.form.bots.forEach(bot => {
-            var b = ctx.bots.find(obj => {
-              return obj.id === bot;
-            });
-            if (b) {
-              botsobj.push(b);
-            }
-          });
-          this.form.bots = botsobj;
-        } else {
-          this.form = this.getDefaultForm();
-        }
-      }
-    });
   }
 };
 </script>

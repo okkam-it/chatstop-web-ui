@@ -16,13 +16,18 @@
     <div class="background">
       <div class="search-bar">
         <font-awesome-icon icon="search" class="fa-search" />
-        <input class="input-field" type="text" v-model="search_string" />
+        <input v-model="search_string" class="input-field" type="text" />
         <div class="btn-add-code">
           <p @click="showBranchCodeModal()">Add an invitation code</p>
         </div>
       </div>
       <div class="bot-list">
-        <item-branch v-for="(branch, key) in branches" :key="key" :branch="branch" :searchstring="search_string"/>
+        <item-branch
+          v-for="(branch, key) in branches"
+          :key="key"
+          :branch="branch"
+          :searchstring="search_string"
+        />
         <!--<p class="branch-name">Sentiment analysys</p>
         <item-bot v-for="bot in filteredBots" :key="bot.id" :bot="bot" />-->
       </div>
@@ -32,18 +37,31 @@
         <font-awesome-icon class="fa" icon="cog" />Admin Panel
       </p>
     </div>-->
-    <branch-code-modal ref="branchCodeModal" @update-branches="updateBranches()"/>
+    <branch-code-modal ref="branchCodeModal" @update-branches="updateBranches()" />
   </div>
 </template>
 
 <script>
 import ItemBranch from "./ItemBranch";
-import BranchCodeModal from "./modals/BranchCodeModal"
+import BranchCodeModal from "./modals/BranchCodeModal";
 export default {
   name: "Bots",
-  components: {    
+  components: {
     ItemBranch,
     BranchCodeModal
+  },
+  props: {
+    branches: {
+      default: function() {
+        return [];
+      },
+      type: Array,
+      required: false
+    },
+    username: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -51,35 +69,10 @@ export default {
       search_string: ""
     };
   },
-  props: {
-    branches: {
-      type: Array,
-      required: false      
-    },
-    username: {
-      type: String,
-      required: true
-    }
-  },
-  methods: {
-    signOut() {
-      this.$store.dispatch("signOutAction");
-    },
-    openAdmin() {
-      //this.$store.dispatch("setAdminPage", true);
-      this.$router.push({ name: 'AdminPanel' })
-    },
-    showBranchCodeModal() {
-      this.$refs.branchCodeModal.show();
-    },
-    updateBranches() {
-      this.$emit("update-branches");
-    }
-  },
   computed: {
     adminSelected() {
       return this.$store.getters.adminPage;
-    },
+    }
     /*filteredBots() {
       return this.bots.filter(bot => {
         return bot.name
@@ -87,6 +80,21 @@ export default {
           .includes(this.search_string.toLowerCase());
       });
     }*/
+  },
+  methods: {
+    signOut() {
+      this.$store.dispatch("signOutAction");
+    },
+    openAdmin() {
+      //this.$store.dispatch("setAdminPage", true);
+      this.$router.push({ name: "AdminPanel" });
+    },
+    showBranchCodeModal() {
+      this.$refs.branchCodeModal.show();
+    },
+    updateBranches() {
+      this.$emit("update-branches");
+    }
   }
 };
 </script>
@@ -230,7 +238,7 @@ export default {
 
 .btn-add-code p {
   color: #ccc;
-  padding:10px;
+  padding: 10px;
   margin: 15px;
   border: 1px dashed #ccc;
   border-radius: 10px;

@@ -1,48 +1,48 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Login from '../views/Login.vue'
-import Register from '../views/Register.vue'
-import ChatRoom from '../views/ChatRoom.vue'
-import AdminPanel from '../views/AdminPanel.vue'
-import AuthGuard from './auth-guard'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import Login from "../views/Login.vue";
+import Register from "../views/Register.vue";
+import ChatRoom from "../views/ChatRoom.vue";
+import AdminPanel from "../views/AdminPanel.vue";
+import AuthGuard from "./auth-guard";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: 'base',
+    name: "base",
     redirect: { name: "ChatRoom" }
   },
   {
-    path: '/login',
-    name: 'Login',
+    path: "/login",
+    name: "Login",
     component: Login,
     beforeEnter: AuthGuard
   },
   {
-    path: '/signup',
-    name: 'Signup',
+    path: "/signup",
+    name: "Signup",
     component: Register
   },
   {
-    path: '/chat',
-    name: 'ChatRoom',
+    path: "/chat",
+    name: "ChatRoom",
     component: ChatRoom,
     beforeEnter: AuthGuard
   },
   {
-    path: '/admin',
-    name: 'AdminPanel',
+    path: "/admin",
+    name: "AdminPanel",
     component: AdminPanel,
     beforeEnter: AuthGuard
   },
-]
+];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
   routes
-})
+});
 
-export default router
+export default router;

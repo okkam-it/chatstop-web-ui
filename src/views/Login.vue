@@ -4,7 +4,13 @@
       <p>Log into ChatStop</p>
       <span @click="goToSignup()">Or Create Account</span>
       <!--<div v-if="status==='loading'">loading</div>-->
-      <b-form ref="form_login" @submit="onSubmit" @reset="onReset" v-if="show" class="form-login">
+      <b-form
+        v-if="show"
+        ref="form_login"
+        class="form-login"
+        @submit="onSubmit"
+        @reset="onReset"
+      >
         <b-form-group>
           <b-form-input
             id="username"
@@ -12,19 +18,29 @@
             type="text"
             required
             placeholder="Username"
-          ></b-form-input>
+          />
         </b-form-group>
         <b-form-group>
           <b-form-input
-            type="password"
             id="password"
             v-model.trim="form_login.password"
+            type="password"
             required
             placeholder="Password"
-          ></b-form-input>
+          />
         </b-form-group>
-        <b-button type="submit" class="login-button background-primary-color">Login</b-button>
-        <div class="error-box" v-if="msg_error"><p>{{msg_error}}</p></div>
+        <b-button
+          type="submit"
+          class="login-button background-primary-color"
+        >
+          Login
+        </b-button>
+        <div
+          v-if="msg_error"
+          class="error-box"
+        >
+          <p>{{ msg_error }}</p>
+        </div>
       </b-form>
     </div>
   </div>
@@ -104,7 +120,7 @@ export default {
       this.$refs.form_login.reset();
     },
     goToSignup() {
-      this.$router.push({ name: 'Signup' }) 
+      this.$router.push({ name: "Signup" }); 
     }
   }
 };

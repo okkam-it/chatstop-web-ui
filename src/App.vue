@@ -13,11 +13,26 @@
         </p>
       </div>
     </div>-->
-    <div class="content" :class="{ 'mobile' : isMobile}">
-      <sidebar v-if="user && !isLoading" key="sidebar" />
-      <transition-group name="fade-long" class="full-width">
-        <splash-screen v-if="isLoading" key="splash-screen"></splash-screen>
-        <router-view key="router-view" class="router-view" />
+    <div
+      class="content"
+      :class="{ 'mobile' : isMobile}"
+    >
+      <sidebar
+        v-if="user && !isLoading"
+        key="sidebar"
+      />
+      <transition-group
+        name="fade-long"
+        class="full-width"
+      >
+        <splash-screen
+          v-if="isLoading"
+          key="splash-screen"
+        />
+        <router-view
+          key="router-view"
+          class="router-view"
+        />
       </transition-group>
     </div>
   </div>
@@ -28,7 +43,7 @@ import SplashScreen from "@/components/SplashScreen";
 import Sidebar from "@/components/sidebar/Sidebar";
 
 export default {
-  name: "app",
+  name: "App",
   components: {
     SplashScreen,
     Sidebar

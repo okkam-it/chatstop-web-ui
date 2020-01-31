@@ -1,6 +1,11 @@
 <template>
-  <div v-if="branch" class="branch-box">
-    <p class="branch-name">{{branch.name}}</p>
+  <div
+    v-if="branch"
+    class="branch-box"
+  >
+    <p class="branch-name">
+      {{ branch.name }}
+    </p>
     <item-bot
       v-for="bot in bots"
       :key="bot.id"
@@ -19,11 +24,6 @@ export default {
   components: {
     ItemBot
   },
-  data() {
-    return {
-      bots: []
-    };
-  },
   props: {
     branch: {
       type: Object,
@@ -33,6 +33,21 @@ export default {
       type: String,
       required: true
     }
+  },
+  data() {
+    return {
+      bots: []
+    };
+  },
+  computed: {},
+  watch: {
+    branch: function() {
+      this.loadBranchBots();
+      // console.log("Branch updated " + newBranch + " " + oldBranch);
+    }
+  },
+  mounted() {
+    this.loadBranchBots();
   },
   methods: {
     loadBranchBots() {
@@ -47,17 +62,7 @@ export default {
           this.msg_error = e.message;
         });
     }
-  },
-  watch: {
-    branch: function() {
-      this.loadBranchBots();
-      // console.log("Branch updated " + newBranch + " " + oldBranch);
-    }
-  },
-  mounted() {
-    this.loadBranchBots();
-  },
-  computed: {}
+  }
 };
 </script>
 <style scoped>

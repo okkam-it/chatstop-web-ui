@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8081/'
+const BASE_URL = "http://localhost:8081/";
 
 export default {
 
@@ -34,4 +34,4 @@ export default {
   FIND_ALL_CHATS: BASE_URL + "chatroom/{chatRoomId}/chats?limit=",
   CREATE_CHATROOM: BASE_URL + "chatroom",
 
-}
+};

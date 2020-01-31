@@ -1,8 +1,18 @@
 <template>
-  <div class="splash-screen" :class="{'mobile':isMobile}">
+  <div
+    class="splash-screen"
+    :class="{'mobile':isMobile}"
+  >
     <div>
-      <b-img class="logo" alt="stop_logo" :src="logo"></b-img>
-      <p class="title" :class="{'mobile':isMobile}">
+      <b-img
+        class="logo"
+        alt="stop_logo"
+        :src="logo"
+      />
+      <p
+        class="title"
+        :class="{'mobile':isMobile}"
+      >
         <strong>ST</strong><span>op </span>
         <strong>O</strong><span>besity </span>
         <strong>P</strong><span>latform</span>
@@ -14,16 +24,16 @@
 <script>
 export default {
   name: "SplashScreen",
+  props: {},
   data() {
     return {
       logo: require("@/assets/stop_logo_transparent.png")
     };
   },
-  props: {},
-  methods: {   
-  },
+  computed: {},
   watch: {},
-  computed: {}
+  methods: {   
+  }
 };
 </script>
 <style scoped>

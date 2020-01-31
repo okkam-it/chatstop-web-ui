@@ -1,22 +1,50 @@
 <template>
   <b-list-group-item :class="{disabled : user.uid == selectedUser.uid}">
     <b-row class="row">
-      <b-col cols="8" lg="6">
-        <span class="user-name">{{user.username}}</span>
+      <b-col
+        cols="8"
+        lg="6"
+      >
+        <span class="user-name">{{ user.username }}</span>
       </b-col>
-      <b-col cols="4" lg="4" >
-        <b-badge pill v-if="user.admin">
-          <font-awesome-icon icon="user-shield" class="fa-admin available" />
+      <b-col
+        cols="4"
+        lg="4"
+      >
+        <b-badge
+          v-if="user.admin"
+          pill
+        >
+          <font-awesome-icon
+            icon="user-shield"
+            class="fa-admin available"
+          />
           <strong>Admin</strong>
         </b-badge>
       </b-col>
-      <b-col cols="12" lg="2">
+      <b-col
+        cols="12"
+        lg="2"
+      >
         <div class="bot-options">
-          <div @click="editUser(user)" v-if="user.uid != selectedUser.uid">
-            <font-awesome-icon class="fa" icon="cog" />
+          <div
+            v-if="user.uid != selectedUser.uid"
+            @click="editUser(user)"
+          >
+            <font-awesome-icon
+              class="fa"
+              icon="cog"
+            />
           </div>
-          <div @click="deleteUser()" v-if="user.uid != selectedUser.uid" class="trash-box">
-            <font-awesome-icon class="fa" icon="trash" />
+          <div
+            v-if="user.uid != selectedUser.uid"
+            class="trash-box"
+            @click="deleteUser()"
+          >
+            <font-awesome-icon
+              class="fa"
+              icon="trash"
+            />
           </div>
         </div>
       </b-col>
@@ -27,17 +55,24 @@
 <script>
 export default {
   name: "ItemBot",
-  data() {
-    return {
-      convs: 0
-    };
-  },
   props: {
     user: {
       type: Object,
       required: true
     }
   },
+  data() {
+    return {
+      convs: 0
+    };
+  },
+  computed: {
+    selectedUser() {
+      return this.$store.getters.user;
+    }
+  },
+  watch: {},
+  created() {},
   methods: {
     editUser() {
       this.$emit("edituser");
@@ -45,14 +80,7 @@ export default {
     deleteUser() {
       this.$emit("deleteuser");
     }
-  },
-  watch: {},
-  computed: {
-    selectedUser() {
-      return this.$store.getters.user;
-    }
-  },
-  created() {}
+  }
 };
 </script>
 <style scoped>
