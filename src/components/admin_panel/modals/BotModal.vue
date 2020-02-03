@@ -1,22 +1,8 @@
 <template>
-  <b-modal
-    :id="modalid"
-    v-model="state"
-    hide-footer
-    :title="getModalTitle()"
-  >
-    <b-form
-      v-if="showForm"
-      ref="form"
-      @submit="onSubmit"
-      @reset="onReset"
-    >
+  <b-modal :id="modalid" v-model="state" hide-footer :title="getModalTitle()">
+    <b-form v-if="showForm" ref="form" @submit="onSubmit" @reset="onReset">
       <b-form-group label="Bot Name:">
-        <b-form-input
-          v-model.trim="form.name"
-          required
-          placeholder="Enter name"
-        />
+        <b-form-input v-model.trim="form.name" required placeholder="Enter name" />
       </b-form-group>
 
       <b-form-group label="Server IP and port">
@@ -60,39 +46,14 @@
         <!--<b-form-checkbox v-model="form.available">Available</b-form-checkbox>-->
         <!--<b-form-checkbox v-model="form.hidden">Hidden</b-form-checkbox>
         <b-form-checkbox v-model="form.hidden">Hidden</b-form-checkbox>-->
-        <b-form-radio
-          v-model="form.showTo"
-          value="NONE"
-        >
-          Hidden
-        </b-form-radio>
-        <b-form-radio
-          v-model="form.showTo"
-          value="ADMIN"
-        >
-          Show only to admin
-        </b-form-radio>
-        <b-form-radio
-          v-model="form.showTo"
-          value="ALL"
-        >
-          Show to all users
-        </b-form-radio>
+        <b-form-radio v-model="form.showTo" value="NONE">Hidden</b-form-radio>
+        <b-form-radio v-model="form.showTo" value="ADMIN">Show only to admin</b-form-radio>
+        <b-form-radio v-model="form.showTo" value="ALL">Show to all users</b-form-radio>
       </b-form-group>
 
-      <b-button
-        class="save-button background-primary-color"
-        type="submit"
-      >
-        Save Bot
-      </b-button>
-      <div
-        v-if="msg_error"
-        class="error-box"
-      >
-        <p>
-          {{ msg_error }}
-        </p>
+      <b-button class="save-button background-primary-color" type="submit">Save Bot</b-button>
+      <div v-if="msg_error" class="error-box">
+        <p>{{ msg_error }}</p>
       </div>
     </b-form>
   </b-modal>

@@ -1,21 +1,14 @@
 <template>
-  <div
-    class="splash-screen"
-    :class="{'mobile':isMobile}"
-  >
+  <div class="splash-screen" :class="{'mobile':isMobile}">
     <div>
-      <b-img
-        class="logo"
-        alt="stop_logo"
-        :src="logo"
-      />
-      <p
-        class="title"
-        :class="{'mobile':isMobile}"
-      >
-        <strong>ST</strong><span>op </span>
-        <strong>O</strong><span>besity </span>
-        <strong>P</strong><span>latform</span>
+      <b-img class="logo" alt="stop_logo" :src="logo" />
+      <p class="title" :class="{'mobile':isMobile}">
+        <strong>ST</strong>
+        <span>op</span>
+        <strong>O</strong>
+        <span>besity</span>
+        <strong>P</strong>
+        <span>latform</span>
       </p>
     </div>
   </div>
@@ -32,8 +25,7 @@ export default {
   },
   computed: {},
   watch: {},
-  methods: {   
-  }
+  methods: {}
 };
 </script>
 <style scoped>
@@ -60,32 +52,38 @@ export default {
 
 .title {
   overflow: hidden; /* Ensures the content is not revealed until the animation */
-  border-right: .15em solid orange; /* The typwriter cursor */
+  border-right: 0.15em solid orange; /* The typwriter cursor */
   white-space: nowrap; /* Keeps the content on a single line */
   margin: 0 auto; /* Gives that scrolling effect as the typing happens */
-  letter-spacing: .15em; /* 15em */
-  animation: 
-    typing 2.0s steps(40, end),
-    blink-caret .75s step-end infinite;
+  letter-spacing: 0.15em; /* 15em */
+  animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
 }
 
 /* The typing effect */
 @keyframes typing {
-  from { width: 0 }
-  to { width: 100% }
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 /* The typewriter cursor effect */
 @keyframes blink-caret {
-  from, to { border-color: transparent }
-  50% { border-color: orange; }
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: orange;
+  }
 }
-
 
 /** CSS MOBILE */
 
 .title.mobile {
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
 }
 
 .splash-screen.mobile {

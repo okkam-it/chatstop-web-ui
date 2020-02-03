@@ -1,16 +1,8 @@
 <template>
   <div class="sb">
-    <div
-      class="item"
-      :class="{ selected: route == 'ChatRoom'}"
-      title="Chats"
-      @click="openChatroom"
-    >
+    <div class="item" :class="{ selected: route == 'ChatRoom'}" title="Chats" @click="openChatroom">
       <p>
-        <font-awesome-icon
-          class="fa"
-          icon="comments"
-        />
+        <font-awesome-icon class="fa" icon="comments" />
       </p>
     </div>
     <div
@@ -21,43 +13,23 @@
       @click="openAdmin"
     >
       <p>
-        <font-awesome-icon
-          class="fa"
-          icon="user-shield"
-        />
+        <font-awesome-icon class="fa" icon="user-shield" />
       </p>
     </div>
 
-    <div
-      id="popover-options-menu"
-      class="item bottom"      
-      @click.stop="toggleMenu()"      
-    >
+    <div id="popover-options-menu" class="item bottom" @click.stop="toggleMenu()">
       <p>
-        <font-awesome-icon
-          class="fa"
-          icon="ellipsis-h"
-        />
+        <font-awesome-icon class="fa" icon="ellipsis-h" />
       </p>
     </div>
-    <b-popover
-      target="popover-options-menu"
-      placement="right"
-      :show.sync="showMenu"
-    >
+    <b-popover target="popover-options-menu" placement="right" :show.sync="showMenu">
       <template v-slot:title>
         <span class="username">{{ user.email.replace("@fakemail.ie", "") }}</span>
       </template>
-      <div
-        class="btn-logout"
-        @click="signOut()"
-      >
+      <div class="btn-logout" @click="signOut()">
         <span>
           Log out
-          <font-awesome-icon
-            class="fa"
-            icon="sign-out-alt"
-          />
+          <font-awesome-icon class="fa" icon="sign-out-alt" />
         </span>
       </div>
     </b-popover>
@@ -65,7 +37,6 @@
 </template>
 
 <script>
-
 export default {
   name: "Bots",
   components: {},
@@ -93,28 +64,26 @@ export default {
     signOut() {
       this.$store.dispatch("signOutAction");
     },
-    clickOutsideListener() {      
+    clickOutsideListener() {
       document.addEventListener("click", this.close);
     },
     removeClickOutsideListener() {
-      document.removeEventListener("click",this.close);
+      document.removeEventListener("click", this.close);
     },
-    toggleMenu() {     
-      
-      if(!this.showMenu) {
+    toggleMenu() {
+      if (!this.showMenu) {
         this.clickOutsideListener();
       } else {
         this.removeClickOutsideListener();
       }
       this.showMenu = !this.showMenu;
-      
     },
     close() {
       if (this.showMenu) {
         this.showMenu = false;
-      }      
+      }
     }
-  }  
+  }
 };
 </script>
 <style scoped>

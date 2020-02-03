@@ -1,37 +1,13 @@
 <template>
-  <b-modal
-    :id="modalid"
-    v-model="state"
-    hide-footer
-    title="Add an invitation code"
-  >
-    <b-form
-      v-if="showForm"
-      ref="form"
-      @submit="onSubmit"
-      @reset="onReset"
-    >
+  <b-modal :id="modalid" v-model="state" hide-footer title="Add an invitation code">
+    <b-form v-if="showForm" ref="form" @submit="onSubmit" @reset="onReset">
       <b-form-group>
-        <b-form-input
-          v-model.trim="code"
-          required
-          placeholder="Enter code"
-        />
+        <b-form-input v-model.trim="code" required placeholder="Enter code" />
       </b-form-group>
 
-      <b-button
-        class="save-button background-primary-color"
-        type="submit"
-      >
-        Add Code
-      </b-button>
-      <div
-        v-if="msg_error"
-        class="error-box"
-      >
-        <p>
-          {{ msg_error }}
-        </p>
+      <b-button class="save-button background-primary-color" type="submit">Add Code</b-button>
+      <div v-if="msg_error" class="error-box">
+        <p>{{ msg_error }}</p>
       </div>
     </b-form>
   </b-modal>

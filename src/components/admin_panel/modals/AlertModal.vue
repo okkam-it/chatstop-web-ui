@@ -1,17 +1,11 @@
 <template>
   <b-modal v-if="alertvalues" v-model="state" :title="alertvalues.title">
     <div>
-      <b-alert variant="danger" show>
-        {{ alertvalues.body }}
-      </b-alert>
+      <b-alert variant="danger" show>{{ alertvalues.body }}</b-alert>
     </div>
     <template v-slot:modal-footer="{ ok, cancel }">
-      <b-button variant="secondary" @click="cancel()">
-        {{ alertvalues.cancelText }}
-      </b-button>
-      <b-button variant="danger" @click="confirm()">
-        {{ alertvalues.confirmText }}
-      </b-button>
+      <b-button variant="secondary" @click="cancel()">{{ alertvalues.cancelText }}</b-button>
+      <b-button variant="danger" @click="confirm()">{{ alertvalues.confirmText }}</b-button>
     </template>
   </b-modal>
 </template>

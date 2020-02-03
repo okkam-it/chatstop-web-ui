@@ -13,26 +13,11 @@
         </p>
       </div>
     </div>-->
-    <div
-      class="content"
-      :class="{ 'mobile' : isMobile}"
-    >
-      <sidebar
-        v-if="user && !isLoading"
-        key="sidebar"
-      />
-      <transition-group
-        name="fade-long"
-        class="full-width"
-      >
-        <splash-screen
-          v-if="isLoading"
-          key="splash-screen"
-        />
-        <router-view
-          key="router-view"
-          class="router-view"
-        />
+    <div class="content" :class="{ 'mobile' : isMobile}">
+      <sidebar v-if="user && !isLoading" key="sidebar" />
+      <transition-group name="fade-long" class="full-width">
+        <splash-screen v-if="isLoading" key="splash-screen" />
+        <router-view key="router-view" class="router-view" />
       </transition-group>
     </div>
   </div>
@@ -62,7 +47,7 @@ export default {
   computed: {
     user() {
       return this.$store.getters.user;
-    }    
+    }
   },
   watch: {
     user() {
@@ -77,7 +62,7 @@ export default {
     setTimeout(() => {
       this.isLoading = false;
     }, 3000);
-  }    
+  }
 };
 </script>
 

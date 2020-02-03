@@ -1,48 +1,25 @@
 <template>
   <b-list-group-item>
     <b-row class="row">
-      <b-col
-        cols="8"
-        lg="3"
-      >
+      <b-col cols="8" lg="3">
         <span class="user-name">{{ branch.name }}</span>
       </b-col>
-      <b-col
-        cols="4"
-        lg="4"
-      >
+      <b-col cols="4" lg="4">
         <strong class="branch-code">{{ branch.code }}</strong>
       </b-col>
-      <b-col
-        cols="4"
-        lg="3"
-      >
+      <b-col cols="4" lg="3">
         <b-badge pill>
-          <font-awesome-icon
-            icon="user"
-            class="fa-admin available"
-          />
+          <font-awesome-icon icon="user" class="fa-admin available" />
           <strong>{{ users }} users</strong>
         </b-badge>
       </b-col>
-      <b-col
-        cols="12"
-        lg="2"
-      >
+      <b-col cols="12" lg="2">
         <div class="bot-options">
           <div>
-            <font-awesome-icon
-              class="fa"
-              icon="cog"
-              @click="editBranch()"
-            />
+            <font-awesome-icon class="fa" icon="cog" @click="editBranch()" />
           </div>
           <div class="trash-box">
-            <font-awesome-icon
-              class="fa"
-              icon="trash"
-              @click="deleteBranch()"
-            />
+            <font-awesome-icon class="fa" icon="trash" @click="deleteBranch()" />
           </div>
         </div>
       </b-col>

@@ -21,7 +21,8 @@ module.exports = {
     }],
     "vue/singleline-html-element-content-newline": ["error", {
       "ignoreWhenNoAttributes": true,
-      "ignoreWhenEmpty": true
+      "ignoreWhenEmpty": true,
+      "ignores": ["pre", "textarea", "span", "strong", "b-button", "b-alert", "b-form-radio", "b-badge", "p"]
     }]
   }
 };

@@ -1,9 +1,7 @@
 <template>
   <div class="background">
     <div class="box box-login">
-      <p>
-        Create a new ChatStop account
-      </p>
+      <p>Create a new ChatStop account</p>
       <span @click="goToLogin()">Or Login</span>
       <!--<div v-if="status==='loading'">loading</div>-->
       <b-form
@@ -19,7 +17,7 @@
             id="new-username"
             v-model.trim="form_signup.username"
             autocomplete="off"
-            type="text"            
+            type="text"
             required
             placeholder="Username"
           />
@@ -27,8 +25,8 @@
         <b-form-group>
           <b-form-input
             id="new-password"
-            v-model.trim="form_signup.password"    
-            type="password"        
+            v-model.trim="form_signup.password"
+            type="password"
             autocomplete="off"
             required
             placeholder="Password"
@@ -44,19 +42,9 @@
             placeholder="Password"
           />
         </b-form-group>
-        <b-button
-          type="submit"
-          class="login-button background-primary-color"
-        >
-          Sign up
-        </b-button>
-        <div
-          v-if="msg_error"
-          class="error-box"
-        >
-          <p>
-            {{ msg_error }}
-          </p>
+        <b-button type="submit" class="login-button background-primary-color">Sign up</b-button>
+        <div v-if="msg_error" class="error-box">
+          <p>{{ msg_error }}</p>
         </div>
       </b-form>
     </div>
@@ -98,16 +86,16 @@ export default {
     },
     status() {
       return this.$store.getters.status;
-    },
+    }
     /*passwordValidation() {
         return this.form_signup.password.length > 6 && this.form_signup.confirm_password.length>6 && this.form_signup.password === this.form_signup.confirm_password
       }*/
   },
   watch: {
     error() {
-      if(this.error && this.error.length) {
+      if (this.error && this.error.length) {
         this.msg_error = this.error.replace("email address", "username");
-      }      
+      }
     }
 
     /*user (value) {
@@ -125,7 +113,7 @@ export default {
       } else {
         this.msg_error = "Passwords don't match.";
       }
-      
+
       // alert(JSON.stringify(this.form_login))
 
       // this.reset()
@@ -133,8 +121,8 @@ export default {
     onReset(evt) {
       evt.preventDefault();
       this.form_signup.username = "";
-      this.form_signup.password = ""; 
-      this.form_signup.confirm_password = ""; 
+      this.form_signup.password = "";
+      this.form_signup.confirm_password = "";
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {
@@ -206,12 +194,11 @@ export default {
 }
 
 .error-box {
-  
 }
 
-.error-box p{
+.error-box p {
   font-size: 14px;
-  margin-top:5px;
+  margin-top: 5px;
   color: #ff0000;
 }
 </style>

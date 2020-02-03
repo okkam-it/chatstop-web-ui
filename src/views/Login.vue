@@ -1,18 +1,10 @@
 <template>
   <div class="background">
     <div class="box box-login">
-      <p>
-        Log into ChatStop
-      </p>
+      <p>Log into ChatStop</p>
       <span @click="goToSignup()">Or Create Account</span>
       <!--<div v-if="status==='loading'">loading</div>-->
-      <b-form
-        v-if="show"
-        ref="form_login"
-        class="form-login"
-        @submit="onSubmit"
-        @reset="onReset"
-      >
+      <b-form v-if="show" ref="form_login" class="form-login" @submit="onSubmit" @reset="onReset">
         <b-form-group>
           <b-form-input
             id="username"
@@ -31,19 +23,9 @@
             placeholder="Password"
           />
         </b-form-group>
-        <b-button
-          type="submit"
-          class="login-button background-primary-color"
-        >
-          Login
-        </b-button>
-        <div
-          v-if="msg_error"
-          class="error-box"
-        >
-          <p>
-            {{ msg_error }}
-          </p>
+        <b-button type="submit" class="login-button background-primary-color">Login</b-button>
+        <div v-if="msg_error" class="error-box">
+          <p>{{ msg_error }}</p>
         </div>
       </b-form>
     </div>
@@ -89,9 +71,9 @@ export default {
   },
   watch: {
     error() {
-      if(this.error && this.error.length) {
+      if (this.error && this.error.length) {
         this.msg_error = this.error.replace("email address", "username");
-      }      
+      }
     }
     /*user (value) {
         if (value !== null && value !== undefined) {
@@ -124,7 +106,7 @@ export default {
       this.$refs.form_login.reset();
     },
     goToSignup() {
-      this.$router.push({ name: "Signup" }); 
+      this.$router.push({ name: "Signup" });
     }
   }
 };
@@ -181,12 +163,11 @@ export default {
   margin-top: 30px;
 }
 .error-box {
-  
 }
 
-.error-box p{
+.error-box p {
   font-size: 14px;
-  margin-top:5px;
+  margin-top: 5px;
   color: #ff0000;
 }
 </style>

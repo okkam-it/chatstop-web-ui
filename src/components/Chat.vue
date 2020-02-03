@@ -44,9 +44,7 @@
               </div>
               <div v-if="chat.user === user.username" class="chat-message text-right">
                 <div class="bubble right-bubble">
-                  <p text-wrap>
-                    {{ chat.message }}
-                  </p>
+                  <p text-wrap>{{ chat.message }}</p>
                   <div class="msg-date">
                     <span>{{ new Date(chat.sendDate).getHours() + ":" + String(new Date(chat.sendDate).getMinutes()).padStart(2, "0") }}</span>
                   </div>
@@ -54,9 +52,7 @@
               </div>
               <div v-if="chat.user !== user.username" class="chat-message text-left" text-left>
                 <div class="bubble left-bubble">
-                  <p text-wrap>
-                    {{ chat.message }}
-                  </p>
+                  <p text-wrap>{{ chat.message }}</p>
                   <div class="msg-date">
                     <span>{{ new Date(chat.sendDate).getHours() + ":" + String(new Date(chat.sendDate).getMinutes()).padStart(2, "0") }}</span>
                   </div>

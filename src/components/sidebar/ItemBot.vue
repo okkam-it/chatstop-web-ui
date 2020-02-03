@@ -1,36 +1,14 @@
 <template>
-  <div
-    v-if="bot && showItem"
-    class="box"
-    :class="{ selected: isSelected}"
-    @click="selectBot()"
-  >
+  <div v-if="bot && showItem" class="box" :class="{ selected: isSelected}" @click="selectBot()">
     <!--<b-img class="bot-image background-primary-color" src="https://via.placeholder.com/150/4f94c2/ffffff?text=BOT" />-->
-    <font-awesome-icon
-      class="fa-bot-logo"
-      icon="robot"
-    />
+    <font-awesome-icon class="fa-bot-logo" icon="robot" />
     <div>
-      <p class="bot-name">
-        {{ bot.name }}
-      </p>
-      <span
-        v-if="bot.available"
-        class="bot-desc"
-      >
-        <font-awesome-icon
-          icon="circle"
-          class="fa-bot available"
-        />Online
+      <p class="bot-name">{{ bot.name }}</p>
+      <span v-if="bot.available" class="bot-desc">
+        <font-awesome-icon icon="circle" class="fa-bot available" />Online
       </span>
-      <span
-        v-else
-        class="bot-desc"
-      >
-        <font-awesome-icon
-          icon="circle"
-          class="fa-bot"
-        />Offline
+      <span v-else class="bot-desc">
+        <font-awesome-icon icon="circle" class="fa-bot" />Offline
       </span>
     </div>
   </div>
@@ -68,7 +46,8 @@ export default {
       if (
         sbot &&
         sbot.id === this.bot.id &&
-        sbranch && sbranch.id === this.branch.id
+        sbranch &&
+        sbranch.id === this.branch.id
       ) {
         return true;
       }

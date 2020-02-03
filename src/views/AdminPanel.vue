@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="manage-background"
-    :class="{'mobile' : isMobile}"
-  >
+  <div class="manage-background" :class="{'mobile' : isMobile}">
     <div class="manage-container">
       <b-container>
         <b-row class="header">
@@ -16,9 +13,7 @@
           <b-col cols="12">
             <div class="menu-fixed">
               <div class="title title-panel">
-                <p>
-                  Admin panel
-                </p>
+                <p>Admin panel</p>
               </div>
             </div>
           </b-col>
@@ -27,18 +22,11 @@
         <div class="border-box">
           <b-row class="header">
             <b-col>
-              <p class="title">
-                Bots
-              </p>
+              <p class="title">Bots</p>
             </b-col>
             <b-col>
               <div class="new-btn">
-                <b-button
-                  class="background-primary-color"
-                  @click="newBot()"
-                >
-                  Add new Bot
-                </b-button>
+                <b-button class="background-primary-color" @click="newBot()">Add new Bot</b-button>
               </div>
             </b-col>
           </b-row>
@@ -57,32 +45,16 @@
           </div>
 
           <div>
-            <p class="sub-title">
-              Download csv data
-            </p>
+            <p class="sub-title">Download csv data</p>
             <b-row>
-              <b-col
-                v-for="(bot, key) in bots"
-                :key="key"
-                cols="6"
-                md="2"
-                lg="2"
-              >
-                <div
-                  class="csv"
-                  @click="downloadCSV(bot)"
-                >
-                  <font-awesome-icon
-                    class="fa"
-                    icon="file-csv"
-                  />
+              <b-col v-for="(bot, key) in bots" :key="key" cols="6" md="2" lg="2">
+                <div class="csv" @click="downloadCSV(bot)">
+                  <font-awesome-icon class="fa" icon="file-csv" />
                   <p>
                     {{ bot.name }}
                     <br />
                   </p>
-                  <p class="btn-csv-download">
-                    Download
-                  </p>
+                  <p class="btn-csv-download">Download</p>
                 </div>
               </b-col>
             </b-row>
@@ -92,18 +64,11 @@
         <div class="border-box">
           <b-row class="header">
             <b-col>
-              <p class="title">
-                Branches
-              </p>
+              <p class="title">Branches</p>
             </b-col>
             <b-col>
               <div class="new-btn">
-                <b-button
-                  class="background-primary-color"
-                  @click="newBranch()"
-                >
-                  Add new Branch
-                </b-button>
+                <b-button class="background-primary-color" @click="newBranch()">Add new Branch</b-button>
               </div>
             </b-col>
             <!--<b-col cols="2">
@@ -137,9 +102,7 @@
         <div class="border-box">
           <b-row class="header">
             <b-col>
-              <p class="title">
-                Users
-              </p>
+              <p class="title">Users</p>
             </b-col>
             <!--<b-col cols="2">
           <div class="new-bot">
@@ -174,10 +137,7 @@
       :bots="bots"
       @update="branchesListener()"
     />
-    <user-modal
-      ref="userModal"
-      :user="selectedItem"
-    />
+    <user-modal ref="userModal" :user="selectedItem" />
     <alert-modal
       ref="alertModal"
       :alertvalues="alertValues"
@@ -423,7 +383,7 @@ export default {
           for (var index in array[i]) {
             if (line != "") line += ",";
 
-            line += "\"" + array[i][index] + "\"";
+            line += '"' + array[i][index] + '"';
           }
 
           str += line + "\r\n";

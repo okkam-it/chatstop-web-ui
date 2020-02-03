@@ -1,31 +1,11 @@
 <template>
-  <div
-    v-if="!loading"
-    class="chatroom-background"
-  >
+  <div v-if="!loading" class="chatroom-background">
     <!--<sidebar/> -->
-    <b-row
-      class="main"
-      :class="{ 'mobile' : isMobile}"
-    >
-      <b-col
-        v-if="!isMobile"
-        cols="0"
-        sm="0"
-        xl="3"
-        class="col"
-      >
-        <sidebar-chats
-          :branches="branches"
-          :username="username"
-          @update-branches="loadUser()"
-        />
+    <b-row class="main" :class="{ 'mobile' : isMobile}">
+      <b-col v-if="!isMobile" cols="0" sm="0" xl="3" class="col">
+        <sidebar-chats :branches="branches" :username="username" @update-branches="loadUser()" />
       </b-col>
-      <b-col
-        cols="12"
-        xl="9"
-        class="col"
-      >
+      <b-col cols="12" xl="9" class="col">
         <!--<admin-panel v-if="admin && adminPage" />
         <chat v-else-if="!adminPage && bot" :key="bot.id" :bot="bot" :username="username" />
         -->
@@ -37,16 +17,9 @@
           :user="user"
           :stomp-client="stompClient"
         />
-        <div
-          v-else
-          class="chat-void"
-        >
+        <div v-else class="chat-void">
           <div class="logo-box">
-            <b-img
-              class="logo"
-              alt="stop_logo"
-              :src="logo"
-            />
+            <b-img class="logo" alt="stop_logo" :src="logo" />
             <p>
               <strong>ST</strong>
               <span>op</span>
@@ -55,24 +28,15 @@
               <strong>P</strong>
               <span>latform</span>
             </p>
-            <p class="desc">
-              Choose a bot and start chatting!
-            </p>
+            <p class="desc">Choose a bot and start chatting!</p>
           </div>
         </div>
       </b-col>
     </b-row>
 
     <!--<div v-if="isMobile && !selectedBot && !adminPage" class="sidebar-mobile">-->
-    <div
-      v-if="isMobile && !bot"
-      class="sidebar-mobile"
-    >
-      <sidebar-chats
-        :branches="branches"
-        :username="username"
-        @update-branches="loadUser()"
-      />
+    <div v-if="isMobile && !bot" class="sidebar-mobile">
+      <sidebar-chats :branches="branches" :username="username" @update-branches="loadUser()" />
     </div>
   </div>
 </template>
@@ -156,7 +120,11 @@ export default {
       // disconnect older connections, if found
       this.disconnect();
       var socket = new SockJS(services.STOP_API_URL + "stop-chatbot-websocket");
-      const options = { debug: false, heartbeat: false, protocols: ["v12.stomp"] };
+      const options = {
+        debug: false,
+        heartbeat: false,
+        protocols: ["v12.stomp"]
+      };
       this.stompClient = Stomp.over(socket, options);
       this.stompClient.connect(
         {},

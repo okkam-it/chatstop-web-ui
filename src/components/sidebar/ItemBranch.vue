@@ -1,11 +1,6 @@
 <template>
-  <div
-    v-if="branch"
-    class="branch-box"
-  >
-    <p class="branch-name">
-      {{ branch.name }}
-    </p>
+  <div v-if="branch" class="branch-box">
+    <p class="branch-name">{{ branch.name }}</p>
     <item-bot
       v-for="bot in bots"
       :key="bot.id"
