@@ -16,7 +16,9 @@
           <b-col cols="12">
             <div class="menu-fixed">
               <div class="title title-panel">
-                <p>Admin panel</p>
+                <p>
+                  Admin panel
+                </p>
               </div>
             </div>
           </b-col>

@@ -21,7 +21,9 @@
         Save Branch
       </b-button>
       <div v-if="msg_error" class="error-box">
-        <p>{{ msg_error }}</p>
+        <p>
+          {{ msg_error }}
+        </p>
       </div>
     </b-form>
   </b-modal>

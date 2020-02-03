@@ -2,7 +2,7 @@ module.exports = {
   extends: [
     // add more generic rulesets here, such as:
     // 'eslint:recommended',
-    "plugin:vue/recommended"
+    "plugin:vue/strongly-recommended"
   ],
   rules: {
     "no-debugger": process.env.NODE_ENV === "production" ? 2 : 0,
@@ -18,6 +18,10 @@ module.exports = {
       "html": {
         "void": "always",
       }
+    }],
+    "vue/singleline-html-element-content-newline": ["error", {
+      "ignoreWhenNoAttributes": true,
+      "ignoreWhenEmpty": true
     }]
   }
 };

@@ -1,7 +1,9 @@
 <template>
   <div class="background">
     <div class="box box-login">
-      <p>Create a new ChatStop account</p>
+      <p>
+        Create a new ChatStop account
+      </p>
       <span @click="goToLogin()">Or Login</span>
       <!--<div v-if="status==='loading'">loading</div>-->
       <b-form
@@ -52,7 +54,9 @@
           v-if="msg_error"
           class="error-box"
         >
-          <p>{{ msg_error }}</p>
+          <p>
+            {{ msg_error }}
+          </p>
         </div>
       </b-form>
     </div>
