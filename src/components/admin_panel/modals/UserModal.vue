@@ -1,13 +1,13 @@
 <template>
-  <b-modal v-model="state" hide-footer title="Edit user" :id="modalid">
-    <b-form ref="form" @submit="onSubmit" @reset="onReset" v-if="showForm">
+  <b-modal :id="modalid" v-model="state" hide-footer title="Edit user">
+    <b-form v-if="showForm" ref="form" @submit="onSubmit" @reset="onReset">
       <b-form-group label="User account type:">
-        <b-form-select v-model="form.admin" :options="options"></b-form-select>
+        <b-form-select v-model="form.admin" :options="options" />
       </b-form-group>
 
       <b-button class="save-button background-primary-color" type="submit">Save User</b-button>
-      <div class="error-box" v-if="msg_error">
-        <p>{{msg_error}}</p>
+      <div v-if="msg_error" class="error-box">
+        <p>{{ msg_error }}</p>
       </div>
     </b-form>
   </b-modal>
@@ -17,6 +17,14 @@
 import services from "@/config/services";
 export default {
   name: "UserModal",
+  props: {
+    user: {
+      default: function() {
+        return {};
+      },
+      type: Object
+    }
+  },
   data() {
     return {
       modalid: "modal-user",
@@ -30,10 +38,36 @@ export default {
       ]
     };
   },
-  props: {
-    user: {
-      type: Object
+  watch: {
+    user() {
+      if (this.user) {
+        this.form = Object.assign({}, this.user);
+      } else {
+        this.form = this.getDefaultForm();
+      }
     }
+  },
+  /*computed: {
+    selectedOptionUserType() {
+      var f = this.form;
+      console.log(JSON.stringify(f))
+      if (f.admin) {
+        return this.options[1].value;
+      } else {
+        return this.options[0].value;
+      }
+    }
+  },*/
+  mounted() {
+    this.$root.$on("bv::modal::show", (bvEvent, modalId) => {
+      if (modalId == this.modalid) {
+        if (this.user) {
+          this.form = Object.assign({}, this.user);
+        } else {
+          this.form = this.getDefaultForm();
+        }
+      }
+    });
   },
   methods: {
     show() {
@@ -88,37 +122,6 @@ export default {
           this.msg_error = e.message;
         });
     }
-  },
-  watch: {
-    user() {
-      if (this.user) {
-        this.form = Object.assign({}, this.user);
-      } else {
-        this.form = this.getDefaultForm();
-      }
-    }
-  },
-  /*computed: {
-    selectedOptionUserType() {
-      var f = this.form;
-      console.log(JSON.stringify(f))
-      if (f.admin) {
-        return this.options[1].value;
-      } else {
-        return this.options[0].value;
-      }
-    }
-  },*/
-  mounted() {
-    this.$root.$on("bv::modal::show", (bvEvent, modalId) => {
-      if (modalId == this.modalid) {
-        if (this.user) {
-          this.form = Object.assign({}, this.user);
-        } else {
-          this.form = this.getDefaultForm();
-        }
-      }
-    });
   }
 };
 </script>

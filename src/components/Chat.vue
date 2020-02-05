@@ -2,15 +2,15 @@
   <div class="chat-background" :class="{ 'mobile' : isMobile}">
     <div class="chat-header">
       <b-row>
-        <b-col cols="2" v-if="isMobile" @click="openSidebarBots()">
+        <b-col v-if="isMobile" cols="2" @click="openSidebarBots()">
           <div class="menu">
             <font-awesome-icon class="fa" icon="bars" />
           </div>
         </b-col>
         <b-col cols="10">
           <p>
-            {{bot.name}}
-            <span class="bot-desc" v-if="bot.available">
+            {{ bot.name }}
+            <span v-if="bot.available" class="bot-desc">
               <font-awesome-icon icon="circle" class="fa-bot available" />Online
             </span>
           </p>
@@ -19,15 +19,15 @@
     </div>
 
     <div
-      class="chat-box"
       v-if="chats.length"
-      v-chat-scroll="{always: false, smooth: false, scrollonremoved:true, smoothonremoved: false}"
-      @scroll="onScroll"
       ref="chatbox"
+      v-chat-scroll="{always: false, smooth: false, scrollonremoved:true, smoothonremoved: false}"
+      class="chat-box"
+      @scroll="onScroll"
     >
       <transition name="fade">
         <b-list-group>
-          <b-list-group-item class="chat-item" v-for="(chat, index) in chats" :key="index">
+          <b-list-group-item v-for="(chat, index) in chats" :key="index" class="chat-item">
             <!--<div class="chat-status text-center" v-if="chat.type==='join'||chat.type==='exit'">
               <span class="chat-date">{{chat.sendDate}}</span>
               <span class="chat-content-center">{{chat.message}}</span>
@@ -35,39 +35,39 @@
             <!--<div v-else>-->
             <div>
               <div
-                class="tag-date"
                 v-if="index == 0 || new Date(chat.sendDate).getDay() != new Date(chats[index-1].sendDate).getDay()"
+                class="tag-date"
               >
                 <p>
-                  <span>{{new Date(chat.sendDate).toLocaleDateString('default', { day: 'numeric', month: 'long', year: 'numeric' })}}</span>
+                  <span>{{ new Date(chat.sendDate).toLocaleDateString('default', { day: 'numeric', month: 'long', year: 'numeric' }) }}</span>
                 </p>
               </div>
-              <div class="chat-message text-right" v-if="chat.user === user.username">
+              <div v-if="chat.user === user.username" class="chat-message text-right">
                 <div class="bubble right-bubble">
-                  <p text-wrap>{{chat.message}}</p>
+                  <p text-wrap>{{ chat.message }}</p>
                   <div class="msg-date">
-                    <span>{{new Date(chat.sendDate).getHours() + ":" + String(new Date(chat.sendDate).getMinutes()).padStart(2, "0")}}</span>
+                    <span>{{ new Date(chat.sendDate).getHours() + ":" + String(new Date(chat.sendDate).getMinutes()).padStart(2, "0") }}</span>
                   </div>
                 </div>
               </div>
-              <div class="chat-message text-left" text-left v-if="chat.user !== user.username">
+              <div v-if="chat.user !== user.username" class="chat-message text-left" text-left>
                 <div class="bubble left-bubble">
-                  <p text-wrap>{{chat.message}}</p>
+                  <p text-wrap>{{ chat.message }}</p>
                   <div class="msg-date">
-                    <span>{{new Date(chat.sendDate).getHours() + ":" + String(new Date(chat.sendDate).getMinutes()).padStart(2, "0")}}</span>
+                    <span>{{ new Date(chat.sendDate).getHours() + ":" + String(new Date(chat.sendDate).getMinutes()).padStart(2, "0") }}</span>
                   </div>
                 </div>
               </div>
             </div>
           </b-list-group-item>
           <transition name="fade">
-            <b-list-group-item class="chat-item chat-item-typing" v-if="isTyping" key="loading">
+            <b-list-group-item v-if="isTyping" key="loading" class="chat-item chat-item-typing">
               <div class="chat-message chat-message-typing text-left" text-left>
                 <div class="bubble left-bubble">
                   <div id="wave">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+                    <span class="dot" />
+                    <span class="dot" />
+                    <span class="dot" />
                   </div>
                 </div>
               </div>
@@ -76,22 +76,22 @@
         </b-list-group>
       </transition>
     </div>
-    <div class="chat-box" v-else>
+    <div v-else class="chat-box">
       <p class="no-chats">
         <span>No conversation was found with this bot. Start writing now!</span>
       </p>
     </div>
     <footer class="chat-footer">
-      <b-form @submit="onSubmit" autocomplete="off">
+      <b-form autocomplete="off" @submit="onSubmit">
         <b-input-group>
           <b-form-input
-            ref="input_message"
             id="message"
+            ref="input_message"
+            v-model.trim="data.message"
             class="send-input"
             :disabled="!bot.available"
-            v-model.trim="data.message"
             placeholder="Enter your message"
-          ></b-form-input>
+          />
           <b-button type="submit" :disabled="!bot.available" class="send-button">
             <font-awesome-icon icon="paper-plane" />
           </b-button>
@@ -103,27 +103,13 @@
 
 <script>
 import services from "@/config/services";
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
 export default {
   name: "AddBoard",
-  data() {
-    return {
-      data: { type: "", username: "", message: "" },
-      chats: [],
-      errors: [],
-      offStatus: false,
-      isTyping: false,
-      limit: 15,
-      last_scroll_top: 0,
-      stompClient: null,
-      //last_scroll_height: 0,
-      last_x: 0,
-      chatroom: {},
-      loading: false
-    };
-  },
   props: {
+    stompClient: {
+      type: Object,
+      required: true
+    },
     bot: {
       type: Object,
       required: true
@@ -137,18 +123,37 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      data: { type: "", username: "", message: "" },
+      chats: [],
+      errors: [],
+      subscription: null,
+      offStatus: false,
+      isTyping: false,
+      limit: 15,
+      last_scroll_top: 0,
+      //last_scroll_height: 0,
+      last_x: 0,
+      chatroom: {},
+      loading: false
+    };
+  },
   watch: {
     // whenever question changes, this function will run
-    bot: function (newBot, oldBot) {
+    bot: function(newBot, oldBot) {
       if (newBot.id !== oldBot.id) {
         this.loadChatRoom();
       }
     },
-    branch: function (newBranch, oldBranch) {
+    branch: function(newBranch, oldBranch) {
       if (newBranch.id !== oldBranch.id) {
         this.loadChatRoom();
       }
     }
+  },
+  created() {
+    this.loadChatRoom();
   },
   methods: {
     onScroll({ target: { scrollTop, clientHeight, scrollHeight } }) {
@@ -175,7 +180,7 @@ export default {
       this.$refs.chatbox.scrollTop = s;
     },
     loadChatRoom() {
-      this.initWebSocket();
+      this.subscribeChatRoom();
       var url = services.FIND_CHATROOM;
       url = url
         .replace("{userId}", this.user.id)
@@ -238,7 +243,11 @@ export default {
           user: this.user.username,
           message: this.data.message
         };
-        this.stompClient.send("/app/hello", JSON.stringify(data), {});
+        this.stompClient.send(
+          "/app/bot/request/" + this.chatroom.id,
+          JSON.stringify(data),
+          {}
+        );
         data.sendDate = new Date();
         this.chats.push(data);
         this.isTyping = true;
@@ -249,38 +258,19 @@ export default {
     openSidebarBots() {
       this.$store.dispatch("setSelectedBot", null);
     },
-    initWebSocket() {
-      // disconnect older connections, if found
-      this.disconnect();
-      var socket = new SockJS(services.STOP_API_URL + "stop-chatbot-websocket");
-      const options = { debug: false, heartbeat: false, protocols: ['v12.stomp'] }
-      this.stompClient = Stomp.over(socket, options);
-      this.stompClient.connect(
-        {},
-        frame => {
-          //this.connected = true;
-          console.log(frame);
-          this.stompClient.subscribe("/bot/response", tick => {
-            this.isTyping = false;
-            this.chats.push(JSON.parse(tick.body));
-            console.log(this.chats.length);
-          });
-        },
-        error => {
-          console.log(error.message);
-          //this.connected = false;
-        }
-      );
+    subscribeChatRoom() {
+      // unsubscribe older connections, if found
+      this.unsubscribe();
+      this.subscription = this.stompClient.subscribe("/bot/response", tick => {
+        this.isTyping = false;
+        this.chats.push(JSON.parse(tick.body));
+      });
     },
-    disconnect() {
-      if (this.stompClient) {
-        this.stompClient.disconnect();
+    unsubscribe() {
+      if (this.subscription) {
+        this.subscription.unsubscribe();
       }
-      // this.connected = false;
     }
-  },
-  created() {
-    this.loadChatRoom();
   }
 };
 </script>

@@ -2,7 +2,7 @@
   <b-list-group-item>
     <b-row class="row">
       <b-col cols="12" lg="3">
-        <span>{{bot.name}}</span>
+        <span>{{ bot.name }}</span>
       </b-col>
       <b-col cols="5" lg="2">
         <div class="bot-state">
@@ -17,11 +17,11 @@
       <b-col cols="7" lg="2">
         <div class="bot-state">
           Showed to:
-          <strong>{{bot.showTo}}</strong>
+          <strong>{{ bot.showTo }}</strong>
         </div>
       </b-col>
       <b-col cols="6" lg="2">
-        <b-badge pill>{{convs}} conversations</b-badge>
+        <b-badge pill>{{ convs }} conversations</b-badge>
       </b-col>
       <b-col cols="12" lg="3">
         <div class="bot-options">
@@ -32,7 +32,7 @@
           <div @click="editBot()">
             <font-awesome-icon class="fa" icon="cog" />
           </div>
-          <div @click="deleteBot()" class="trash-box">
+          <div class="trash-box" @click="deleteBot()">
             <font-awesome-icon class="fa" icon="trash" />
           </div>
         </div>
@@ -45,29 +45,19 @@
 import services from "@/config/services";
 export default {
   name: "ItemBot",
-  data() {
-    return {
-      convs: 0
-    };
-  },
   props: {
     bot: {
       type: Object,
       required: true
     }
   },
-  methods: {
-    editBot() {
-      this.$emit("editbot");
-    },
-    deleteBot() {
-      this.$emit("deletebot");
-    }
+  data() {
+    return {
+      convs: 0
+    };
   },
+  computed: {},
   watch: {},
-  computed: {
-    
-  },
   created() {
     var context = this;
     var url = services.FIND_CHATROOMS_BY_BOT;
@@ -80,6 +70,14 @@ export default {
       .catch(e => {
         this.msg_error = e.message;
       });
+  },
+  methods: {
+    editBot() {
+      this.$emit("editbot");
+    },
+    deleteBot() {
+      this.$emit("deletebot");
+    }
   }
 };
 </script>

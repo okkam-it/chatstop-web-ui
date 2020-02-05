@@ -47,11 +47,11 @@
           <div>
             <p class="sub-title">Download csv data</p>
             <b-row>
-              <b-col cols="6" md="2" lg="2" v-for="(bot, key) in bots" :key="key">
+              <b-col v-for="(bot, key) in bots" :key="key" cols="6" md="2" lg="2">
                 <div class="csv" @click="downloadCSV(bot)">
-                  <font-awesome-icon class="fa" icon="file-csv"></font-awesome-icon>
+                  <font-awesome-icon class="fa" icon="file-csv" />
                   <p>
-                    {{bot.name}}
+                    {{ bot.name }}
                     <br />
                   </p>
                   <p class="btn-csv-download">Download</p>
@@ -126,16 +126,16 @@
       </b-container>
     </div>
     <bot-modal
+      v-if="!selectedItem || selectedItem.__type != 'user'"
       ref="botModal"
       :bot="selectedItem"
       @update="botsListener()"
-      v-if="!selectedItem || selectedItem.__type != 'user'"
     />
     <branch-modal
       ref="branchModal"
       :branch="selectedItem"
-      @update="branchesListener()"
       :bots="bots"
+      @update="branchesListener()"
     />
     <user-modal ref="userModal" :user="selectedItem" />
     <alert-modal
@@ -167,6 +167,16 @@ export default {
     ItemUser,
     ItemBranch
   },
+  props: {
+    /*bot: {
+      type: Object,
+      required: true
+    },
+    username: {
+      type: String,
+      required: true
+    }*/
+  },
   data() {
     return {
       bots: [],
@@ -180,16 +190,6 @@ export default {
     this.botsListener();
     this.usersListener();
     this.branchesListener();
-  },
-  props: {
-    /*bot: {
-      type: Object,
-      required: true
-    },
-    username: {
-      type: String,
-      required: true
-    }*/
   },
   methods: {
     newBranch() {
@@ -383,7 +383,7 @@ export default {
           for (var index in array[i]) {
             if (line != "") line += ",";
 
-            line += '"' + array[i][index] + '"';
+            line += "\"" + array[i][index] + "\"";
           }
 
           str += line + "\r\n";

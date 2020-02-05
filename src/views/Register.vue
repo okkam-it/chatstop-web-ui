@@ -4,39 +4,48 @@
       <p>Create a new ChatStop account</p>
       <span @click="goToLogin()">Or Login</span>
       <!--<div v-if="status==='loading'">loading</div>-->
-      <b-form autocomplete="off" ref="form_signup" @submit="onSubmit" @reset="onReset" v-if="show" class="form-login">
+      <b-form
+        v-if="show"
+        ref="form_signup"
+        autocomplete="off"
+        class="form-login"
+        @submit="onSubmit"
+        @reset="onReset"
+      >
         <b-form-group>
           <b-form-input
             id="new-username"
-            autocomplete="off"
             v-model.trim="form_signup.username"
-            type="text"            
+            autocomplete="off"
+            type="text"
             required
             placeholder="Username"
-          ></b-form-input>
+          />
         </b-form-group>
         <b-form-group>
           <b-form-input
-            type="password"
-            id="new-password"    
-            autocomplete="off"        
+            id="new-password"
             v-model.trim="form_signup.password"
-            required
-            placeholder="Password"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group>
-          <b-form-input
             type="password"
             autocomplete="off"
-            id="new-password"
-            v-model.trim="form_signup.confirm_password"
             required
             placeholder="Password"
-          ></b-form-input>
+          />
+        </b-form-group>
+        <b-form-group>
+          <b-form-input
+            id="new-password"
+            v-model.trim="form_signup.confirm_password"
+            type="password"
+            autocomplete="off"
+            required
+            placeholder="Password"
+          />
         </b-form-group>
         <b-button type="submit" class="login-button background-primary-color">Sign up</b-button>
-        <div class="error-box" v-if="msg_error"><p>{{msg_error}}</p></div>
+        <div v-if="msg_error" class="error-box">
+          <p>{{ msg_error }}</p>
+        </div>
       </b-form>
     </div>
   </div>
@@ -73,20 +82,20 @@ export default {
       return this.$store.getters.user;
     },
     error() {
-      return this.$store.getters.error
+      return this.$store.getters.error;
     },
     status() {
       return this.$store.getters.status;
-    },
+    }
     /*passwordValidation() {
         return this.form_signup.password.length > 6 && this.form_signup.confirm_password.length>6 && this.form_signup.password === this.form_signup.confirm_password
       }*/
   },
   watch: {
     error() {
-      if(this.error && this.error.length) {
+      if (this.error && this.error.length) {
         this.msg_error = this.error.replace("email address", "username");
-      }      
+      }
     }
 
     /*user (value) {
@@ -102,9 +111,9 @@ export default {
       if (this.form_signup.password === this.form_signup.confirm_password) {
         this.signup();
       } else {
-        this.msg_error = "Passwords don't match."
+        this.msg_error = "Passwords don't match.";
       }
-      
+
       // alert(JSON.stringify(this.form_login))
 
       // this.reset()
@@ -112,8 +121,8 @@ export default {
     onReset(evt) {
       evt.preventDefault();
       this.form_signup.username = "";
-      this.form_signup.password = ""; 
-      this.form_signup.confirm_password = ""; 
+      this.form_signup.password = "";
+      this.form_signup.confirm_password = "";
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {
@@ -127,7 +136,7 @@ export default {
       this.$refs.form_signup.reset();
     },
     goToLogin() {
-        this.$router.push({ name: 'Login' })
+      this.$router.push({ name: "Login" });
     }
   }
 };
@@ -185,12 +194,11 @@ export default {
 }
 
 .error-box {
-  
 }
 
-.error-box p{
+.error-box p {
   font-size: 14px;
-  margin-top:5px;
+  margin-top: 5px;
   color: #ff0000;
 }
 </style>

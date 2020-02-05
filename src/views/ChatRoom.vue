@@ -1,18 +1,25 @@
 <template>
-  <div class="chatroom-background" v-if="!loading">
+  <div v-if="!loading" class="chatroom-background">
     <!--<sidebar/> -->
     <b-row class="main" :class="{ 'mobile' : isMobile}">
-      <b-col cols="0" sm="0" xl="3" class="col" v-if="!isMobile">
-        <sidebar-chats :branches="branches" :username="username" @update-branches="loadUser()"/>
+      <b-col v-if="!isMobile" cols="0" sm="0" xl="3" class="col">
+        <sidebar-chats :branches="branches" :username="username" @update-branches="loadUser()" />
       </b-col>
       <b-col cols="12" xl="9" class="col">
         <!--<admin-panel v-if="admin && adminPage" />
         <chat v-else-if="!adminPage && bot" :key="bot.id" :bot="bot" :username="username" />
         -->
-        <chat v-if="bot" :key="bot.id" :bot="bot" :branch="branch" :user="user" />
-        <div class="chat-void" v-else>
+        <chat
+          v-if="bot"
+          :key="bot.id"
+          :bot="bot"
+          :branch="branch"
+          :user="user"
+          :stomp-client="stompClient"
+        />
+        <div v-else class="chat-void">
           <div class="logo-box">
-            <b-img class="logo" alt="stop_logo" :src="logo"></b-img>
+            <b-img class="logo" alt="stop_logo" :src="logo" />
             <p>
               <strong>ST</strong>
               <span>op</span>
@@ -39,6 +46,8 @@ import services from "@/config/services";
 
 import Chat from "@/components/Chat";
 import SidebarChats from "@/components/sidebar/SidebarChats";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
 
 export default {
   name: "ChatRoom",
@@ -50,15 +59,11 @@ export default {
     return {
       branches: [],
       user: null,
+      stompClient: null,
       admin: this.$store.getters.user.admin,
-      logo: require("@/assets/stop_logo_grey.png"),
-      stompClient: null
+      logo: require("@/assets/stop_logo_grey.png")
     };
   },
-  created() {
-    this.loadUser();
-  },
-  mounted() {},
 
   computed: {
     bot() {
@@ -87,9 +92,14 @@ export default {
     }
   },
   watch: {},
+  created() {
+    this.loadUser();
+  },
+  mounted() {},
 
   methods: {
     loadUser() {
+      this.initWebSocket();
       var url = services.FIND_USER_BY_UID;
       let uid = this.$store.getters.user.uid;
       let user_uid = JSON.stringify(uid).replace(/"/g, "");
@@ -105,6 +115,42 @@ export default {
       this.axios.get(url).then(response => {
         this.branches = response.data;
       });
+    },
+    initWebSocket() {
+      // disconnect older connections, if found
+      this.disconnect();
+      var socket = new SockJS(services.STOP_API_URL + "stop-chatbot-websocket");
+      const options = {
+        debug: false,
+        heartbeat: false,
+        protocols: ["v12.stomp"]
+      };
+      this.stompClient = Stomp.over(socket, options);
+      this.stompClient.connect(
+        {},
+        frame => {
+          //this.connected = true;
+          console.log(frame);
+          this.stompClient.subscribe("/bot/availability", tick => {
+            let updatedBot = JSON.parse(tick.body);
+            if (this.bot && this.bot.id === updatedBot.id) {
+              this.$store.dispatch("setSelectedBot", null);
+              this.$store.dispatch("setSelectedBranch", null);
+            }
+            this.loadUserBranches(this.user.id);
+          });
+        },
+        error => {
+          console.log(error.message);
+          //this.connected = false;
+        }
+      );
+    },
+    disconnect() {
+      if (this.stompClient) {
+        this.stompClient.disconnect();
+      }
+      // this.connected = false;
     }
   }
 };

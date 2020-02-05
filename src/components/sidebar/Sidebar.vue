@@ -1,6 +1,6 @@
 <template>
   <div class="sb">
-    <div class="item" :class="{ selected: route == 'ChatRoom'}" @click="openChatroom" title="Chats">
+    <div class="item" :class="{ selected: route == 'ChatRoom'}" title="Chats" @click="openChatroom">
       <p>
         <font-awesome-icon class="fa" icon="comments" />
       </p>
@@ -9,26 +9,22 @@
       v-if="user.admin"
       class="item"
       :class="{ selected: route == 'AdminPanel'}"
-      @click="openAdmin"
       title="Admin panel"
+      @click="openAdmin"
     >
       <p>
         <font-awesome-icon class="fa" icon="user-shield" />
       </p>
     </div>
 
-    <div
-      class="item bottom"
-      @click.stop="toggleMenu()"      
-      id="popover-options-menu"      
-    >
+    <div id="popover-options-menu" class="item bottom" @click.stop="toggleMenu()">
       <p>
         <font-awesome-icon class="fa" icon="ellipsis-h" />
       </p>
     </div>
     <b-popover target="popover-options-menu" placement="right" :show.sync="showMenu">
       <template v-slot:title>
-        <span class="username">{{user.email.replace("@fakemail.ie", "")}}</span>
+        <span class="username">{{ user.email.replace("@fakemail.ie", "") }}</span>
       </template>
       <div class="btn-logout" @click="signOut()">
         <span>
@@ -41,16 +37,23 @@
 </template>
 
 <script>
-
 export default {
   name: "Bots",
   components: {},
+  props: {},
   data() {
     return {
       showMenu: false
     };
   },
-  props: {},
+  computed: {
+    route() {
+      return this.$route.name;
+    },
+    user() {
+      return this.$store.getters.user;
+    }
+  },
   methods: {
     openChatroom() {
       this.$router.push({ name: "ChatRoom" });
@@ -61,36 +64,26 @@ export default {
     signOut() {
       this.$store.dispatch("signOutAction");
     },
-    clickOutsideListener() {      
-       document.addEventListener('click', this.close)
+    clickOutsideListener() {
+      document.addEventListener("click", this.close);
     },
     removeClickOutsideListener() {
-      document.removeEventListener('click',this.close)
+      document.removeEventListener("click", this.close);
     },
-    toggleMenu() {     
-      
-      if(!this.showMenu) {
-        this.clickOutsideListener()
+    toggleMenu() {
+      if (!this.showMenu) {
+        this.clickOutsideListener();
       } else {
-        this.removeClickOutsideListener()
+        this.removeClickOutsideListener();
       }
       this.showMenu = !this.showMenu;
-      
     },
-    close () {
+    close() {
       if (this.showMenu) {
-        this.showMenu = false
-      }      
+        this.showMenu = false;
+      }
     }
-  },
-  computed: {
-    route() {
-      return this.$route.name;
-    },
-    user() {
-      return this.$store.getters.user;
-    }
-  }  
+  }
 };
 </script>
 <style scoped>

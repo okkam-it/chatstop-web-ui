@@ -1,8 +1,8 @@
 <template>
-  <b-modal v-model="state" hide-footer :title="getModalTitle()" :id="modalid">
-    <b-form ref="form" @submit="onSubmit" @reset="onReset" v-if="showForm">
+  <b-modal :id="modalid" v-model="state" hide-footer :title="getModalTitle()">
+    <b-form v-if="showForm" ref="form" @submit="onSubmit" @reset="onReset">
       <b-form-group label="Bot Name:">
-        <b-form-input v-model.trim="form.name" required placeholder="Enter name"></b-form-input>
+        <b-form-input v-model.trim="form.name" required placeholder="Enter name" />
       </b-form-group>
 
       <b-form-group label="Server IP and port">
@@ -20,7 +20,7 @@
               v-model.trim="form.address.ip"
               required
               placeholder="ip e.g. xxx.x.x.x:xxxx"
-            ></b-form-input>
+            />
           </b-col>
           <b-col cols="4">
             <b-form-input
@@ -28,7 +28,7 @@
               v-model.trim="form.address.port"
               required
               placeholder="port e.g. xxxx"
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
         <!-- <b-form-input id="input-2" v-model="form['api-url']" required placeholder="e.g. http://xxx.x.x.x:xxxx/api/bot-response"></b-form-input>-->
@@ -39,7 +39,7 @@
           v-model="form.address.path"
           required
           placeholder="API path e.g. /getResponse/"
-        ></b-form-input>
+        />
       </b-form-group>
 
       <b-form-group>
@@ -52,8 +52,8 @@
       </b-form-group>
 
       <b-button class="save-button background-primary-color" type="submit">Save Bot</b-button>
-      <div class="error-box" v-if="msg_error">
-        <p>{{msg_error}}</p>
+      <div v-if="msg_error" class="error-box">
+        <p>{{ msg_error }}</p>
       </div>
     </b-form>
   </b-modal>
@@ -63,6 +63,14 @@
 import services from "@/config/services";
 export default {
   name: "BotModal",
+  props: {
+    bot: {
+      default: function() {
+        return {};
+      },
+      type: Object
+    }
+  },
   data() {
     return {
       modalid: "modal-bot",
@@ -72,10 +80,38 @@ export default {
       msg_error: null
     };
   },
-  props: {
-    bot: {
-      type: Object
+  watch: {
+    /*bot() {
+      if (this.bot) {
+        this.form = Object.assign({}, this.bot);
+      } else {
+        this.form = this.getDefaultForm();
+      }
+    }*/
+  },
+  /*computed: {
+    form() {
+      return this.bot || {
+        name: "",
+        // description: "",
+        created: null,
+        typing: false,
+        hidden: false,
+        "api-url": null,
+        available: false
+      }
     }
+  },*/
+  mounted() {
+    this.$root.$on("bv::modal::show", (bvEvent, modalId) => {
+      if (modalId == this.modalid) {
+        if (this.bot) {
+          this.form = Object.assign({}, this.bot);
+        } else {
+          this.form = this.getDefaultForm();
+        }
+      }
+    });
   },
   methods: {
     show() {
@@ -185,39 +221,6 @@ export default {
           this.msg_error = e.message;
         });
     }
-  },
-  watch: {
-    /*bot() {
-      if (this.bot) {
-        this.form = Object.assign({}, this.bot);
-      } else {
-        this.form = this.getDefaultForm();
-      }
-    }*/
-  },
-  /*computed: {
-    form() {
-      return this.bot || {
-        name: "",
-        // description: "",
-        created: null,
-        typing: false,
-        hidden: false,
-        "api-url": null,
-        available: false
-      }
-    }
-  },*/
-  mounted() {
-    this.$root.$on("bv::modal::show", (bvEvent, modalId) => {
-      if (modalId == this.modalid) {
-        if (this.bot) {
-          this.form = Object.assign({}, this.bot);
-        } else {
-          this.form = this.getDefaultForm();
-        }
-      }
-    });
   }
 };
 </script>
