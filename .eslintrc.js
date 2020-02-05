@@ -22,7 +22,7 @@ module.exports = {
     "vue/singleline-html-element-content-newline": ["error", {
       "ignoreWhenNoAttributes": true,
       "ignoreWhenEmpty": true,
-      "ignores": ["pre", "textarea", "span", "strong", "b-button", "b-alert", "b-form-radio", "b-badge", "p"]
+      "ignores": ["p", "pre", "textarea", "span", "strong", "b-button", "b-alert", "b-form-radio", "b-badge"]
     }]
   }
 };
