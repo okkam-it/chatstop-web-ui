@@ -224,8 +224,8 @@ export default {
         .then(response => {
           response.data;
         })
-        .catch(e => {
-          alert(e.message);
+        .catch(error => {
+          alert(error.response.data.message);
         });
     },
     newBot() {
@@ -318,6 +318,8 @@ export default {
     botsListener() {
       this.axios.get(services.GET_ALL_BOTS).then(response => {
         this.bots = response.data;
+        this.$store.dispatch("setSelectedBot", null);
+        this.$store.dispatch("setSelectedBranch", null);
       });
     },
     branchesListener() {
