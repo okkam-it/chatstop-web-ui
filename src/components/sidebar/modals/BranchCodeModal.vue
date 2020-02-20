@@ -75,11 +75,9 @@ export default {
       if (branch_code) {
         this.axios
           .post(url)
-          .then(function() {
-            return null;
-          })
+          .then(function() {})
           .catch(e => {
-            return e.message;
+            console.log(e);
           });
       } else {
         return "Invalid code";
